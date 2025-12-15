@@ -1,0 +1,3446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Медицинский тест для сотрудников</title>
+    <link rel="icon" type="image/png" href="Med.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #8B0000;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff0000, 0 0 20px #ff0000;
+            animation: neonGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes neonGlow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff0000, 0 0 20px #ff0000;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff0000, 0 0 25px #ff0000, 0 0 30px #ff0000;
+            }
+        }
+        
+        .description {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input[type="email"],
+        input[type="text"],
+        input[type="number"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #8B0000;
+            outline: none;
+        }
+        
+        .btn {
+            background-color: #8B0000;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #A52A2A;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-secondary {
+            background-color: #5f6368;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4a4d52;
+        }
+        
+        .btn-danger {
+            background-color: #d93025;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c5221f;
+        }
+        
+        .btn-success {
+            background-color: #0b8043;
+        }
+        
+        .btn-success:hover {
+            background-color: #096b38;
+        }
+        
+        .btn-warning {
+            background-color: #f9ab00;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e09a00;
+        }
+        
+        .test-section {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question:last-child {
+            border-bottom: none;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .option.selected {
+            background-color: #ffe6e6;
+            border-color: #8B0000;
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        .results {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #8B0000;
+            margin: 20px 0;
+        }
+        
+        .message {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error {
+            color: #d93025;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .success {
+            color: #0b8043;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .admin-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .timer.warning {
+            background-color: #fce8e6;
+            color: #d93025;
+        }
+        
+        .question-timer {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 10px;
+        }
+        
+        .admin-panel {
+            display: none;
+        }
+        
+        .question-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .question-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .option-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .option-input input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .correct-option {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .correct-option select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: #8B0000;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .question-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .question-counter {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .time-expired {
+            background-color: #fce8e6;
+            border: 1px solid #f28b82;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .results-details {
+            text-align: left;
+            margin-top: 30px;
+        }
+        
+        .result-item {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        
+        .result-item.correct {
+            border-left: 4px solid #0b8043;
+        }
+        
+        .result-item.incorrect {
+            border-left: 4px solid #d93025;
+        }
+        
+        .result-item.unanswered {
+            border-left: 4px solid #5f6368;
+        }
+        
+        .result-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .result-answer {
+            margin-bottom: 5px;
+        }
+        
+        .correct-answer {
+            color: #0b8043;
+            font-weight: 600;
+        }
+        
+        .user-answer {
+            color: #8B0000;
+        }
+        
+        .incorrect-answer {
+            color: #d93025;
+            font-weight: 600;
+        }
+        
+        .unanswered {
+            color: #5f6368;
+            font-style: italic;
+        }
+        
+        .results-summary {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            color: #5f6368;
+        }
+        
+        .user-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .user-info {
+            margin-bottom: 10px;
+        }
+        
+        .user-role {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .role-doctor {
+            background-color: #d93025;
+            color: white;
+        }
+        
+        .role-medic {
+            background-color: #1a73e8;
+            color: white;
+        }
+        
+        .role-sanitary {
+            background-color: #f9ab00;
+            color: black;
+        }
+        
+        .user-stats {
+            font-size: 14px;
+            color: #5f6368;
+        }
+        
+        .user-assignments {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .assignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .assignment-item:last-child {
+            border-bottom: none;
+        }
+
+        .question-editor {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .question-editor h3 {
+            margin-bottom: 15px;
+            color: #8B0000;
+        }
+        
+        .option-editor {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .option-editor input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .option-editor .btn {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .time-input {
+            width: 100px;
+            margin-right: 10px;
+        }
+        
+        .question-time {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .question-time label {
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        
+        .firebase-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        .firebase-connected {
+            background-color: #0b8043;
+            color: white;
+        }
+        
+        .firebase-disconnected {
+            background-color: #d93025;
+            color: white;
+        }
+        
+        .user-editor {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .user-editor h3 {
+            margin-bottom: 15px;
+            color: #8B0000;
+        }
+        
+        .back-btn {
+            background-color: #5f6368;
+            margin-bottom: 15px;
+        }
+        
+        .back-btn:hover {
+            background-color: #4a4d52;
+        }
+        
+        .user-answer.correct {
+            color: #0b8043;
+            font-weight: 600;
+        }
+
+        .user-unit {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .unit-st {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .unit-212 {
+            background-color: #fd7e14;
+            color: white;
+        }
+        
+        .unit-501 {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        
+        .unit-41 {
+            background-color: #166534;
+            color: white;
+        }
+        
+        .unit-cg {
+            background-color: #991b1b;
+            color: white;
+        }
+        
+        .unit-crimea {
+            background-color: #7e22ce;
+            color: white;
+        }
+        
+        .unit-none {
+            background-color: transparent;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+        }
+
+        .test-selection {
+            text-align: center;
+        }
+        
+        .test-option {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .test-option:hover {
+            border-color: #8B0000;
+            background-color: #f9f9f9;
+        }
+        
+        .test-option.selected {
+            border-color: #8B0000;
+            background-color: #ffe6e6;
+        }
+        
+        .test-option h3 {
+            color: #8B0000;
+            margin-bottom: 10px;
+        }
+        
+        .test-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .filter-group {
+            margin-bottom: 0;
+        }
+        
+        .filter-group label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .user-answers-list {
+            margin-top: 20px;
+        }
+        
+        .user-answer-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .user-answer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .user-answer-details {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .answer-question {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+        }
+        
+        .answer-question.correct {
+            border-left: 4px solid #0b8043;
+        }
+        
+        .answer-question.incorrect {
+            border-left: 4px solid #d93025;
+        }
+        
+        .answer-question.unanswered {
+            border-left: 4px solid #5f6368;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .admin-btn {
+                position: static;
+                margin-top: 10px;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .question-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .results-summary {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .user-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .option-editor {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .option-editor input {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .firebase-status {
+                position: static;
+                margin-bottom: 10px;
+            }
+            
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-answer-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="firebase-status hidden" id="firebase-status"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Медицинский Тест</h1>
+            <p class="description">Система тестирования медицинских знаний</p>
+            <button class="btn admin-btn" id="admin-toggle">Режим администратора</button>
+        </header>
+        
+        <!-- Панель пользователя -->
+        <div id="user-panel">
+            <div class="card" id="login-section">
+                <h2>Вход в систему</h2>
+                <p>Введите ваш логин и пароль для доступа к тестированию</p>
+                
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" placeholder="Введите ваш логин" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" placeholder="Введите ваш пароль" required>
+                </div>
+                
+                <div class="error hidden" id="login-error">Неверный логин или пароль</div>
+                <div class="error hidden" id="no-assignment-error">Для вашего аккаунта не назначен тест. Обратитесь к администратору.</div>
+                
+                <button class="btn btn-block" id="login-btn">Войти</button>
+            </div>
+            
+            <div class="card test-section" id="test-selection-section">
+                <div class="test-selection">
+                    <h2>Выбор теста</h2>
+                    <p>Выберите один из назначенных вам тестов для прохождения</p>
+                    
+                    <div id="available-tests">
+                    </div>
+                    
+                    <button class="btn btn-block" id="start-selected-test" style="margin-top: 20px; display: none;">Начать выбранный тест</button>
+                    <button class="btn btn-secondary" id="back-to-login" style="margin-top: 10px;">Выйти</button>
+                </div>
+            </div>
+            
+            <div class="card test-section" id="test-section">
+                <div class="timer" id="timer">Общее время: 30:00</div>
+                <div class="question-timer" id="question-timer">Время на вопрос: 60 сек.</div>
+                <div class="question-counter" id="question-counter">Вопрос 1 из 3</div>
+                
+                <h2>Медицинский тест</h2>
+                <p>Ответьте на все вопросы. После завершения вы увидите результаты.</p>
+                
+                <div id="questions-container">
+                </div>
+                
+                <div class="question-navigation">
+                    <button class="btn" id="next-question">Следующий вопрос</button>
+                </div>
+                
+                <button class="btn btn-block" id="submit-test" style="margin-top: 20px; display: none;">Завершить тест</button>
+            </div>
+            
+            <div class="card test-section" id="results-section">
+                <div class="results">
+                    <h2>Результаты теста</h2>
+                    <p class="message" id="result-message"></p>
+                    <div class="score" id="score"></div>
+                    <p>Пользователь: <span id="current-user"></span></p>
+                    <p>Подразделение: <span id="current-unit"></span></p>
+                    
+                    <div class="results-summary" id="results-summary">
+                    </div>
+                    
+                    <div class="results-details" id="results-details">
+                    </div>
+                    
+                    <button class="btn hidden" id="restart-test">Пройти тест снова</button>
+                    <button class="btn btn-secondary" id="logout-btn" style="margin-top: 10px;">Выйти</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Админ-панель -->
+        <div class="admin-panel" id="admin-panel">
+            <div class="card hidden" style="margin-bottom: 20px;" id="back-to-user-container">
+                <button class="btn btn-secondary btn-block" id="back-to-user-login">← Вернуться к входу пользователей</button>
+            </div>
+            
+            <div class="card" id="admin-login">
+                <h2>Вход для администратора</h2>
+                <div class="login-form">
+                    <div class="form-group">
+                        <label for="admin-username">Логин администратора</label>
+                        <input type="text" id="admin-username" placeholder="Введите логин">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-password">Пароль администратора</label>
+                        <input type="password" id="admin-password" placeholder="Введите пароль">
+                    </div>
+                    
+                    <div class="error hidden" id="admin-login-error">Неверный логин или пароль</div>
+                    
+                    <button class="btn btn-block" id="admin-login-btn">Войти как администратор</button>
+                </div>
+            </div>
+            
+            <div class="admin-content hidden" id="admin-content">
+                <div class="tabs">
+                    <div class="tab active" data-tab="users">Управление пользователями</div>
+                    <div class="tab" data-tab="questions">Управление вопросами</div>
+                    <div class="tab" data-tab="assignments">Назначение тестов</div>
+                    <div class="tab" data-tab="user-answers">Результаты ответов пользователей</div>
+                </div>
+                
+                <div class="tab-content active" id="users-tab">
+                    <div class="card">
+                        <h2>Управление пользователями</h2>
+                        <p>Создавайте и управляйте учетными записями пользователей.</p>
+                        
+                        <div class="form-group">
+                            <h3>Добавить нового пользователя</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
+                                <div>
+                                    <label>Логин</label>
+                                    <input type="text" id="new-user-login" placeholder="Логин пользователя">
+                                </div>
+                                <div>
+                                    <label>Пароль</label>
+                                    <input type="password" id="new-user-password" placeholder="Пароль пользователя">
+                                </div>
+                                <div>
+                                    <button class="btn btn-success" id="add-user">Добавить пользователя</button>
+                                </div>
+                            </div>
+                            <div class="success hidden" id="user-add-success">Пользователь успешно добавлен!</div>
+                            <div class="error hidden" id="user-add-error"></div>
+                        </div>
+
+                        <div class="user-editor hidden" id="user-editor">
+                            <h3>Редактирование пользователя</h3>
+                            
+                            <div class="form-group">
+                                <label for="edit-user-login">Логин</label>
+                                <input type="text" id="edit-user-login" placeholder="Логин пользователя">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="edit-user-password">Пароль</label>
+                                <input type="password" id="edit-user-password" placeholder="Новый пароль (оставьте пустым, чтобы не менять)">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="edit-user-role">Роль</label>
+                                <select id="edit-user-role">
+                                    <option value="doctor">Полевой Врач</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="sanitary">Полевой Санитар</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="edit-user-unit">Подразделение</label>
+                                <select id="edit-user-unit">
+                                    <option value="none">Нету</option>
+                                    <option value="st">СТ</option>
+                                    <option value="212">212</option>
+                                    <option value="501">501</option>
+                                    <option value="41">41</option>
+                                    <option value="cg">CG</option>
+                                    <option value="attached">Прикомандированный</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn btn-success" id="save-user">Сохранить изменения</button>
+                                <button class="btn btn-secondary" id="cancel-user-edit">Отмена</button>
+                            </div>
+                        </div>
+                        
+                        <div id="users-list">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="questions-tab">
+                    <div class="card">
+                        <h2>Управление вопросами</h2>
+                        <p>Создавайте наборы вопросов для тестирования.</p>
+                        
+                        <div class="form-group">
+                            <label for="question-set-name">Название набора вопросов</label>
+                            <input type="text" id="question-set-name" placeholder="Введите название набора">
+                            
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="question-set-time">Общее время теста (минуты)</label>
+                                <input type="number" id="question-set-time" min="1" value="30">
+                            </div>
+                            
+                            <button class="btn" id="add-question-set" style="margin-top: 10px;">Создать новый набор</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="question-sets">Выберите набор вопросов</label>
+                            <select id="question-sets">
+                                <option value="">-- Выберите набор --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="question-editor hidden" id="question-editor">
+                            <h3>Редактирование вопроса</h3>
+                            
+                            <div class="form-group">
+                                <label for="edit-question-text">Текст вопроса</label>
+                                <textarea id="edit-question-text" rows="3" placeholder="Введите текст вопроса"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Варианты ответов</label>
+                                <div id="options-container">
+                                </div>
+                                <button class="btn btn-secondary" id="add-option">Добавить вариант</button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="correct-answer">Правильный ответ</label>
+                                <select id="correct-answer">
+                                    <option value="">-- Выберите правильный ответ --</option>
+                                </select>
+                            </div>
+                            
+                            <div class="question-time">
+                                <label for="question-time">Время на вопрос (секунды):</label>
+                                <input type="number" id="question-time" class="time-input" min="10" value="60">
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn btn-success" id="save-question">Сохранить вопрос</button>
+                                <button class="btn btn-secondary" id="cancel-edit">Отмена</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn" id="add-question">Добавить вопрос в набор</button>
+                        </div>
+                        
+                        <div id="questions-list">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="assignments-tab">
+                    <div class="card">
+                        <h2>Назначение тестов</h2>
+                        <p>Назначайте конкретные наборы вопросов пользователям.</p>
+                        
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label for="filter-unit">Фильтр по подразделению</label>
+                                <select id="filter-unit">
+                                    <option value="">Все подразделения</option>
+                                    <option value="none">Нету</option>
+                                    <option value="st">СТ</option>
+                                    <option value="212">212</option>
+                                    <option value="501">501</option>
+                                    <option value="41">41</option>
+                                    <option value="cg">CG</option>
+                                    <option value="attached">Прикомандированный</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filter-role">Фильтр по роли</label>
+                                <select id="filter-role">
+                                    <option value="">Все роли</option>
+                                    <option value="doctor">Полевой Врач</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="sanitary">Полевой Санитар</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
+                                <div>
+                                    <label>Пользователь</label>
+                                    <select id="assign-user">
+                                        <option value="">-- Выберите пользователя --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Набор вопросов</label>
+                                    <select id="assign-question-set">
+                                        <option value="">-- Выберите набор --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button class="btn btn-success" id="assign-test">Назначить тест</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="assignments-list">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="results-tab">
+                    <div class="card">
+                        <h2>Результаты тестов</h2>
+                        <p>Просмотр результатов прохождения тестов пользователями.</p>
+                        <div id="test-results-list">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="user-answers-tab">
+                    <div class="card">
+                        <h2>Ответы от пользователей</h2>
+                        <p>Просмотр всех ответов пользователей на тесты.</p>
+                        
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label for="filter-answers-unit">Фильтр по подразделению</label>
+                                <select id="filter-answers-unit">
+                                    <option value="">Все подразделения</option>
+                                    <option value="none">Нету</option>
+                                    <option value="st">СТ</option>
+                                    <option value="212">212</option>
+                                    <option value="501">501</option>
+                                    <option value="41">41</option>
+                                    <option value="cg">CG</option>
+                                    <option value="attached">Прикомандированный</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filter-answers-role">Фильтр по роли</label>
+                                <select id="filter-answers-role">
+                                    <option value="">Все роли</option>
+                                    <option value="doctor">Полевой Врач</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="sanitary">Полевой Санитар</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filter-answers-test">Фильтр по тесту</label>
+                                <select id="filter-answers-test">
+                                    <option value="">Все тесты</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="user-answers-list" id="user-answers-list">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="settings-tab">
+                    <div class="card">
+                        <h2>Настройки системы</h2>
+                        <p>Настройте общие параметры тестирования.</p>
+                        
+                        <div class="form-group">
+                            <p>Общее время теста теперь настраивается для каждого набора вопросов индивидуально.</p>
+                        </div>
+                        
+                        <button class="btn btn-block" id="save-settings">Сохранить настройки</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <button class="btn btn-secondary btn-block" id="user-mode">Вернуться в режим пользователя</button>
+                    <button class="btn btn-danger btn-block" id="admin-logout" style="margin-top: 10px;">Выйти из админ-панели</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Система Тестирования Медицинского Корпуса © 2025</p>
+        </footer>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // 🔥 КОНФИГУРАЦИЯ FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAL8dXiQQFdboo1Z36mfcr41_ux4uf5KMs",
+            authDomain: "medicallsites.firebaseapp.com",
+            projectId: "medicallsites",
+            storageBucket: "medicallsites.firebasestorage.app",
+            messagingSenderId: "1089776801097",
+            appId: "1:1089776801097:web:0452d0daea026b3b80f698"
+        };
+
+        // Инициализация Firebase
+        let db;
+        let auth;
+        let firebaseConnected = false;
+
+        try {
+            if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                auth = firebase.auth();
+                firebaseConnected = true;
+                console.log("✅ Firebase подключен");
+                updateFirebaseStatus(true);
+                
+                // Создаем администратора по умолчанию
+                createDefaultAdmin();
+            } else {
+                console.log("⚠️ Firebase не настроен, используется localStorage");
+                updateFirebaseStatus(false);
+            }
+        } catch (error) {
+            console.error("❌ Ошибка Firebase:", error);
+            updateFirebaseStatus(false);
+        }
+
+        // Функция для создания администратора по умолчанию
+        async function createDefaultAdmin() {
+            try {
+                const users = await loadUsers();
+                const adminExists = users.some(user => user.role === 'admin');
+                
+                if (!adminExists) {
+                    const defaultAdmin = {
+                        login: 'admin',
+                        password: 'admin123',
+                        role: 'admin',
+                        unit: 'none',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await saveUser(defaultAdmin);
+                    console.log('✅ Администратор по умолчанию создан');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка создания администратора по умолчанию:', error);
+            }
+        }
+
+        function updateFirebaseStatus(connected) {
+            const statusElement = document.getElementById('firebase-status');
+            if (connected) {
+                statusElement.textContent = 'Firebase: Подключено';
+                statusElement.className = 'firebase-status firebase-connected';
+                statusElement.classList.remove('hidden');
+            } else {
+                statusElement.textContent = 'Firebase: Не подключено (локальный режим)';
+                statusElement.className = 'firebase-status firebase-disconnected';
+                statusElement.classList.remove('hidden');
+            }
+        }
+
+        // Firebase функции
+        async function loadUsers() {
+            try {
+                if (!firebaseConnected) {
+                    return getLocalUsers();
+                }
+
+                const snapshot = await db.collection('users').get();
+                const users = [];
+                
+                snapshot.forEach(doc => {
+                    users.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return users;
+            } catch (error) {
+                console.error('❌ Ошибка загрузки пользователей:', error);
+                return getLocalUsers();
+            }
+        }
+
+        async function saveUser(user) {
+            try {
+                if (!firebaseConnected) {
+                    return saveUserToLocal(user);
+                }
+
+                // Если у пользователя нет ID, создаем нового
+                if (!user.id) {
+                    const docRef = await db.collection('users').add(user);
+                    user.id = docRef.id;
+                    return user;
+                }
+                
+                // Если ID есть, обновляем существующего пользователя
+                await db.collection('users').doc(user.id).set(user, { merge: true });
+                saveUserToLocal(user);
+                return user;
+            } catch (error) {
+                console.error('❌ Ошибка сохранения пользователя:', error);
+                saveUserToLocal(user);
+                throw error;
+            }
+        }
+
+        async function deleteUser(userId) {
+            try {
+                if (!firebaseConnected) {
+                    const users = getLocalUsers();
+                    const updatedUsers = users.filter(u => u.id !== userId);
+                    localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
+                    return;
+                }
+
+                await db.collection('users').doc(userId).delete();
+                
+                const users = getLocalUsers();
+                const updatedUsers = users.filter(u => u.id !== userId);
+                localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
+                
+            } catch (error) {
+                console.error('❌ Ошибка удаления пользователя:', error);
+                throw error;
+            }
+        }
+
+        async function loadQuestionSets() {
+            try {
+                if (!firebaseConnected) {
+                    return getLocalQuestionSets();
+                }
+
+                const snapshot = await db.collection('questionSets').get();
+                const questionSets = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    questionSets.push({
+                        id: doc.id,
+                        name: data.name,
+                        totalTime: data.totalTime || 30,
+                        questions: data.questions || []
+                    });
+                });
+                
+                return questionSets;
+            } catch (error) {
+                console.error('❌ Ошибка загрузки наборов вопросов:', error);
+                return getLocalQuestionSets();
+            }
+        }
+
+        async function saveQuestionSet(questionSet) {
+            try {
+                if (!firebaseConnected) {
+                    return saveQuestionSetToLocal(questionSet);
+                }
+
+                // Если у набора нет ID, создаем новый
+                if (!questionSet.id) {
+                    const docRef = await db.collection('questionSets').add(questionSet);
+                    questionSet.id = docRef.id;
+                    return questionSet;
+                }
+                
+                // Если ID есть, обновляем существующий набор
+                await db.collection('questionSets').doc(questionSet.id).set(questionSet, { merge: true });
+                saveQuestionSetToLocal(questionSet);
+                return questionSet;
+            } catch (error) {
+                console.error('❌ Ошибка сохранения набора вопросов:', error);
+                saveQuestionSetToLocal(questionSet);
+                throw error;
+            }
+        }
+
+        async function deleteQuestionSet(questionSetId) {
+            try {
+                if (!firebaseConnected) {
+                    const questionSets = getLocalQuestionSets();
+                    const updatedQuestionSets = questionSets.filter(qs => qs.id !== questionSetId);
+                    localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
+                    return;
+                }
+
+                await db.collection('questionSets').doc(questionSetId).delete();
+                
+                const questionSets = getLocalQuestionSets();
+                const updatedQuestionSets = questionSets.filter(qs => qs.id !== questionSetId);
+                localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
+                
+            } catch (error) {
+                console.error('❌ Ошибка удаления набора вопросов:', error);
+                throw error;
+            }
+        }
+
+        async function loadAssignments() {
+            try {
+                if (!firebaseConnected) {
+                    return getLocalAssignments();
+                }
+
+                const snapshot = await db.collection('assignments').get();
+                const assignments = [];
+                
+                snapshot.forEach(doc => {
+                    assignments.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return assignments;
+            } catch (error) {
+                console.error('❌ Ошибка загрузки назначений:', error);
+                return getLocalAssignments();
+            }
+        }
+
+        async function saveAssignment(assignment) {
+            try {
+                if (!firebaseConnected) {
+                    return saveAssignmentToLocal(assignment);
+                }
+
+                // Если у назначения нет ID, создаем новое
+                if (!assignment.id) {
+                    const docRef = await db.collection('assignments').add(assignment);
+                    assignment.id = docRef.id;
+                    return assignment;
+                }
+                
+                // Если ID есть, обновляем существующее назначение
+                await db.collection('assignments').doc(assignment.id).set(assignment, { merge: true });
+                saveAssignmentToLocal(assignment);
+                return assignment;
+            } catch (error) {
+                console.error('❌ Ошибка сохранения назначения:', error);
+                saveAssignmentToLocal(assignment);
+                throw error;
+            }
+        }
+
+        async function deleteAssignment(assignmentId) {
+            try {
+                if (!firebaseConnected) {
+                    const assignments = getLocalAssignments();
+                    const updatedAssignments = assignments.filter(a => a.id !== assignmentId);
+                    localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
+                    return;
+                }
+
+                await db.collection('assignments').doc(assignmentId).delete();
+                
+                const assignments = getLocalAssignments();
+                const updatedAssignments = assignments.filter(a => a.id !== assignmentId);
+                localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
+                
+            } catch (error) {
+                console.error('❌ Ошибка удаления назначения:', error);
+                throw error;
+            }
+        }
+
+        async function loadTestResults() {
+            try {
+                if (!firebaseConnected) {
+                    return getLocalTestResults();
+                }
+
+                const snapshot = await db.collection('testResults').get();
+                const testResults = [];
+                
+                snapshot.forEach(doc => {
+                    testResults.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return testResults;
+            } catch (error) {
+                console.error('❌ Ошибка загрузки результатов тестов:', error);
+                return getLocalTestResults();
+            }
+        }
+
+        async function saveTestResult(testResult) {
+            try {
+                if (!firebaseConnected) {
+                    return saveTestResultToLocal(testResult);
+                }
+
+                const docRef = await db.collection('testResults').add(testResult);
+                testResult.id = docRef.id;
+                
+                saveTestResultToLocal(testResult);
+                return testResult;
+            } catch (error) {
+                console.error('❌ Ошибка сохранения результата теста:', error);
+                saveTestResultToLocal(testResult);
+                throw error;
+            }
+        }
+
+        // Функции для работы с localStorage
+        function getLocalUsers() {
+            try {
+                const users = localStorage.getItem('medicalTestUsers');
+                return users ? JSON.parse(users) : [];
+            } catch (error) {
+                console.error('❌ Ошибка получения пользователей из localStorage:', error);
+                return [];
+            }
+        }
+
+        function saveUserToLocal(user) {
+            try {
+                const users = getLocalUsers();
+                const existingIndex = users.findIndex(u => u.id === user.id);
+                
+                if (existingIndex >= 0) {
+                    users[existingIndex] = user;
+                } else {
+                    users.push(user);
+                }
+                
+                localStorage.setItem('medicalTestUsers', JSON.stringify(users));
+            } catch (error) {
+                console.error('❌ Ошибка сохранения пользователя в localStorage:', error);
+            }
+        }
+
+        function getLocalQuestionSets() {
+            try {
+                const questionSets = localStorage.getItem('medicalTestQuestionSets');
+                if (questionSets) {
+                    const sets = JSON.parse(questionSets);
+                    return sets.map(set => ({
+                        ...set,
+                        totalTime: set.totalTime || 30
+                    }));
+                }
+                return [];
+            } catch (error) {
+                console.error('❌ Ошибка получения наборов вопросов из localStorage:', error);
+                return [];
+            }
+        }
+
+        function saveQuestionSetToLocal(questionSet) {
+            try {
+                const questionSets = getLocalQuestionSets();
+                const existingIndex = questionSets.findIndex(qs => qs.id === questionSet.id);
+                
+                if (existingIndex >= 0) {
+                    questionSets[existingIndex] = questionSet;
+                } else {
+                    questionSets.push(questionSet);
+                }
+                
+                localStorage.setItem('medicalTestQuestionSets', JSON.stringify(questionSets));
+            } catch (error) {
+                console.error('❌ Ошибка сохранения набора вопросов в localStorage:', error);
+            }
+        }
+
+        function getLocalAssignments() {
+            try {
+                const assignments = localStorage.getItem('medicalTestAssignments');
+                return assignments ? JSON.parse(assignments) : [];
+            } catch (error) {
+                console.error('❌ Ошибка получения назначений из localStorage:', error);
+                return [];
+            }
+        }
+
+        function saveAssignmentToLocal(assignment) {
+            try {
+                const assignments = getLocalAssignments();
+                const existingIndex = assignments.findIndex(a => a.id === assignment.id);
+                
+                if (existingIndex >= 0) {
+                    assignments[existingIndex] = assignment;
+                } else {
+                    assignments.push(assignment);
+                }
+                
+                localStorage.setItem('medicalTestAssignments', JSON.stringify(assignments));
+            } catch (error) {
+                console.error('❌ Ошибка сохранения назначения в localStorage:', error);
+            }
+        }
+
+        function getLocalTestResults() {
+            try {
+                const testResults = localStorage.getItem('medicalTestResults');
+                return testResults ? JSON.parse(testResults) : [];
+            } catch (error) {
+                console.error('❌ Ошибка получения результатов тестов из localStorage:', error);
+                return [];
+            }
+        }
+
+        function saveTestResultToLocal(testResult) {
+            try {
+                const testResults = getLocalTestResults();
+                testResults.push(testResult);
+                localStorage.setItem('medicalTestResults', JSON.stringify(testResults));
+            } catch (error) {
+                console.error('❌ Ошибка сохранения результата теста в localStorage:', error);
+            }
+        }
+
+        // Функции для работы с ответами пользователей
+        async function loadUserAnswers() {
+            try {
+                if (!firebaseConnected) {
+                    return getLocalUserAnswers();
+                }
+
+                const snapshot = await db.collection('userAnswers').get();
+                const userAnswers = [];
+                
+                snapshot.forEach(doc => {
+                    userAnswers.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                return userAnswers;
+            } catch (error) {
+                console.error('❌ Ошибка загрузки ответов пользователей:', error);
+                return getLocalUserAnswers();
+            }
+        }
+
+        async function saveUserAnswer(userAnswer) {
+            try {
+                if (!firebaseConnected) {
+                    return saveUserAnswerToLocal(userAnswer);
+                }
+
+                const docRef = await db.collection('userAnswers').add(userAnswer);
+                userAnswer.id = docRef.id;
+                
+                saveUserAnswerToLocal(userAnswer);
+                return userAnswer;
+            } catch (error) {
+                console.error('❌ Ошибка сохранения ответа пользователя:', error);
+                saveUserAnswerToLocal(userAnswer);
+                throw error;
+            }
+        }
+
+        function getLocalUserAnswers() {
+            try {
+                const userAnswers = localStorage.getItem('medicalTestUserAnswers');
+                return userAnswers ? JSON.parse(userAnswers) : [];
+            } catch (error) {
+                console.error('❌ Ошибка получения ответов пользователей из localStorage:', error);
+                return [];
+            }
+        }
+
+        function saveUserAnswerToLocal(userAnswer) {
+            try {
+                const userAnswers = getLocalUserAnswers();
+                userAnswers.push(userAnswer);
+                localStorage.setItem('medicalTestUserAnswers', JSON.stringify(userAnswers));
+            } catch (error) {
+                console.error('❌ Ошибка сохранения ответа пользователя в localStorage:', error);
+            }
+        }
+
+        // Функция для получения отображаемого названия подразделения
+        function getUnitDisplayName(unit) {
+            const unitNames = {
+                'none': 'Нету',
+                'st': 'СТ',
+                '212': '212',
+                '501': '501',
+                '41': '41',
+                'cg': 'CG',
+                'attached': 'Прикомандированный'
+            };
+            return unitNames[unit] || 'Неизвестно';
+        }
+
+        // Функция для получения CSS класса подразделения
+        function getUnitClass(unit) {
+            const unitClasses = {
+                'none': 'unit-none',
+                'st': 'unit-st',
+                '212': 'unit-212',
+                '501': 'unit-501',
+                '41': 'unit-41',
+                'cg': 'unit-cg',
+                'crimea': 'unit-crimea',
+                'attached': 'unit-attached'
+            };
+            return unitClasses[unit] || 'unit-none';
+        }
+
+        // Основная логика приложения
+        let currentUser = null;
+        let currentQuestionSet = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let totalTime = 30 * 60;
+        let questionTime = 60;
+        let timerInterval;
+        let questionTimerInterval;
+        let remainingQuestionTime = 0;
+        let selectedAssignment = null;
+
+        // DOM элементы
+        const userPanel = document.getElementById('user-panel');
+        const adminPanel = document.getElementById('admin-panel');
+        const adminToggle = document.getElementById('admin-toggle');
+        const userModeBtn = document.getElementById('user-mode');
+        const adminLogin = document.getElementById('admin-login');
+        const adminContent = document.getElementById('admin-content');
+        const adminLoginBtn = document.getElementById('admin-login-btn');
+        const adminLogoutBtn = document.getElementById('admin-logout');
+        const loginSection = document.getElementById('login-section');
+        const testSelectionSection = document.getElementById('test-selection-section');
+        const testSection = document.getElementById('test-section');
+        const resultsSection = document.getElementById('results-section');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const backToLoginBtn = document.getElementById('back-to-login');
+        const startSelectedTestBtn = document.getElementById('start-selected-test');
+        const submitTestBtn = document.getElementById('submit-test');
+        const restartTestBtn = document.getElementById('restart-test');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const timerElement = document.getElementById('timer');
+        const questionTimerElement = document.getElementById('question-timer');
+        const questionCounterElement = document.getElementById('question-counter');
+        const questionsContainer = document.getElementById('questions-container');
+        const availableTestsContainer = document.getElementById('available-tests');
+        const currentUserElement = document.getElementById('current-user');
+        const currentUnitElement = document.getElementById('current-unit');
+        const scoreElement = document.getElementById('score');
+        const resultMessageElement = document.getElementById('result-message');
+        const resultsSummaryElement = document.getElementById('results-summary');
+        const resultsDetailsElement = document.getElementById('results-details');
+        const backToUserLoginBtn = document.getElementById('back-to-user-login');
+        const backToUserContainer = document.getElementById('back-to-user-container');
+
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            showLoginSection();
+            loadSettings();
+            initEventListeners();
+            loadAdminData();
+        });
+
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('medicalTestSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+            }
+        }
+
+        function saveSettings() {
+            const settings = {};
+            localStorage.setItem('medicalTestSettings', JSON.stringify(settings));
+        }
+
+        function initEventListeners() {
+            adminToggle.addEventListener('click', function() {
+                userPanel.style.display = 'none';
+                adminPanel.style.display = 'block';
+                adminLogin.classList.remove('hidden');
+                adminContent.classList.add('hidden');
+                adminToggle.style.display = 'none';
+                backToUserContainer.classList.remove('hidden');
+            });
+
+            backToUserLoginBtn.addEventListener('click', function() {
+                adminPanel.style.display = 'none';
+                userPanel.style.display = 'block';
+                showLoginSection();
+                adminToggle.style.display = 'block';
+            });
+
+            userModeBtn.addEventListener('click', function() {
+                adminPanel.style.display = 'none';
+                userPanel.style.display = 'block';
+                showLoginSection();
+                adminToggle.style.display = 'block';
+            });
+
+            adminLoginBtn.addEventListener('click', function() {
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+                authenticateAdmin(username, password);
+            });
+
+            adminLogoutBtn.addEventListener('click', function() {
+                adminLogin.classList.remove('hidden');
+                adminContent.classList.add('hidden');
+                document.getElementById('admin-username').value = '';
+                document.getElementById('admin-password').value = '';
+                document.getElementById('admin-login-error').classList.add('hidden');
+                adminToggle.style.display = 'block';
+                backToUserContainer.classList.remove('hidden');
+            });
+
+            loginBtn.addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                authenticateUser(username, password);
+            });
+
+            logoutBtn.addEventListener('click', function() {
+                currentUser = null;
+                localStorage.removeItem('currentMedicalTestUser');
+                showLoginSection();
+                adminToggle.style.display = 'block';
+            });
+
+            backToLoginBtn.addEventListener('click', function() {
+                showLoginSection();
+            });
+
+            startSelectedTestBtn.addEventListener('click', function() {
+                if (selectedAssignment) {
+                    startSelectedTest();
+                }
+            });
+
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+            submitTestBtn.addEventListener('click', submitTest);
+            restartTestBtn.addEventListener('click', restartTest);
+
+            document.getElementById('filter-unit').addEventListener('change', loadAssignmentsList);
+            document.getElementById('filter-role').addEventListener('change', loadAssignmentsList);
+
+            document.getElementById('filter-answers-unit').addEventListener('change', loadUserAnswersList);
+            document.getElementById('filter-answers-role').addEventListener('change', loadUserAnswersList);
+            document.getElementById('filter-answers-test').addEventListener('change', loadUserAnswersList);
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    if (tabId === 'users') {
+                        loadUsersList();
+                    } else if (tabId === 'questions') {
+                        loadQuestionSetsList();
+                    } else if (tabId === 'assignments') {
+                        loadAssignmentsList();
+                    } else if (tabId === 'results') {
+                        loadTestResultsList();
+                    } else if (tabId === 'user-answers') {
+                        loadUserAnswersList();
+                    }
+                });
+            });
+
+            document.getElementById('add-user').addEventListener('click', addUser);
+            document.getElementById('save-user').addEventListener('click', saveUserChanges);
+            document.getElementById('cancel-user-edit').addEventListener('click', cancelUserEdit);
+
+            document.getElementById('add-question-set').addEventListener('click', addQuestionSet);
+            document.getElementById('question-sets').addEventListener('change', loadQuestionsForSet);
+            document.getElementById('add-question').addEventListener('click', addNewQuestion);
+            document.getElementById('add-option').addEventListener('click', addOption);
+            document.getElementById('save-question').addEventListener('click', saveQuestionChanges);
+            document.getElementById('cancel-edit').addEventListener('click', cancelQuestionEdit);
+
+            document.getElementById('assign-test').addEventListener('click', assignTest);
+
+            document.getElementById('save-settings').addEventListener('click', saveSystemSettings);
+        }
+
+        // Аутентификация администратора
+        async function authenticateAdmin(username, password) {
+            try {
+                const users = await loadUsers();
+                const admin = users.find(u => u.login === username && u.password === password && u.role === 'admin');
+                
+                if (admin) {
+                    adminLogin.classList.add('hidden');
+                    adminContent.classList.remove('hidden');
+                    document.getElementById('admin-login-error').classList.add('hidden');
+                    backToUserContainer.classList.add('hidden');
+                } else {
+                    document.getElementById('admin-login-error').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка аутентификации администратора:', error);
+                document.getElementById('admin-login-error').classList.remove('hidden');
+            }
+        }
+
+        // Аутентификация пользователя
+        async function authenticateUser(username, password) {
+            try {
+                const users = await loadUsers();
+                const user = users.find(u => u.login === username && u.password === password);
+                
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentMedicalTestUser', JSON.stringify(user));
+                    document.getElementById('login-error').classList.add('hidden');
+                    document.getElementById('no-assignment-error').classList.add('hidden');
+                    
+                    await loadUserAssignments();
+                    
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
+                    document.getElementById('no-assignment-error').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('❌ Ошибка аутентификации:', error);
+                document.getElementById('login-error').classList.remove('hidden');
+                document.getElementById('no-assignment-error').classList.add('hidden');
+            }
+        }
+
+        // Загрузка назначений пользователя
+        async function loadUserAssignments() {
+            try {
+                const assignments = await loadAssignments();
+                const userAssignments = assignments.filter(a => a.userId === currentUser.id);
+                
+                if (userAssignments.length === 0) {
+                    document.getElementById('no-assignment-error').classList.remove('hidden');
+                    document.getElementById('login-error').classList.add('hidden');
+                    return;
+                }
+                
+                const questionSets = await loadQuestionSets();
+                const availableTests = [];
+                
+                for (const assignment of userAssignments) {
+                    const questionSet = questionSets.find(qs => qs.id === assignment.questionSetId);
+                    if (questionSet) {
+                        availableTests.push({
+                            assignment: assignment,
+                            questionSet: questionSet
+                        });
+                    }
+                }
+                
+                if (availableTests.length > 0) {
+                    showTestSelection(availableTests);
+                } else {
+                    document.getElementById('no-assignment-error').classList.remove('hidden');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки назначений:', error);
+                document.getElementById('no-assignment-error').classList.remove('hidden');
+            }
+        }
+
+        // Отображение выбора теста
+        function showTestSelection(availableTests) {
+            availableTestsContainer.innerHTML = '';
+            selectedAssignment = null;
+            startSelectedTestBtn.style.display = 'none';
+            
+            if (availableTests.length === 0) {
+                availableTestsContainer.innerHTML = '<p>Нет доступных тестов</p>';
+                return;
+            }
+            
+            availableTests.forEach((test, index) => {
+                const testOption = document.createElement('div');
+                testOption.className = 'test-option';
+                testOption.setAttribute('data-index', index);
+                
+                testOption.innerHTML = `
+                    <h3>${test.questionSet.name}</h3>
+                    <p>${test.questionSet.questions ? test.questionSet.questions.length : 0} вопросов</p>
+                    <div class="test-info">
+                        <span>Время: ${test.questionSet.totalTime || 30} мин.</span>
+                        <span>Назначен: ${new Date(test.assignment.assignedAt).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                `;
+                
+                testOption.addEventListener('click', function() {
+                    document.querySelectorAll('.test-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    selectedAssignment = test;
+                    startSelectedTestBtn.style.display = 'block';
+                });
+                
+                availableTestsContainer.appendChild(testOption);
+            });
+            
+            showTestSelectionSection();
+        }
+
+        // ЗАПУСК ВЫБРАННОГО ТЕСТА - ИСПРАВЛЕННАЯ ВЕРСИЯ
+        function startSelectedTest() {
+            if (!selectedAssignment) {
+                alert('Пожалуйста, выберите тест для начала');
+                return;
+            }
+            
+            console.log('Запуск теста:', selectedAssignment);
+            
+            currentQuestionSet = selectedAssignment.questionSet;
+            totalTime = (currentQuestionSet.totalTime || 30) * 60;
+            
+            // Сбрасываем состояние теста
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            startTest();
+            showTestSection();
+        }
+
+        // Отображение разделов
+        function showLoginSection() {
+            loginSection.style.display = 'block';
+            testSelectionSection.style.display = 'none';
+            testSection.style.display = 'none';
+            resultsSection.style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('no-assignment-error').classList.add('hidden');
+            adminToggle.style.display = 'block';
+        }
+
+        function showTestSelectionSection() {
+            loginSection.style.display = 'none';
+            testSelectionSection.style.display = 'block';
+            testSection.style.display = 'none';
+            resultsSection.style.display = 'none';
+            adminToggle.style.display = 'none';
+        }
+
+        function showTestSection() {
+            loginSection.style.display = 'none';
+            testSelectionSection.style.display = 'none';
+            testSection.style.display = 'block';
+            resultsSection.style.display = 'none';
+            adminToggle.style.display = 'none';
+        }
+
+        function showResultsSection() {
+            loginSection.style.display = 'none';
+            testSelectionSection.style.display = 'none';
+            testSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+            adminToggle.style.display = 'block';
+        }
+
+        // Выход пользователя
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('currentMedicalTestUser');
+            showLoginSection();
+        }
+
+        // Запуск теста
+        function startTest() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            remainingQuestionTime = 0;
+            startTimer();
+            displayQuestion();
+        }
+
+        // Таймер теста
+        function startTimer() {
+            clearInterval(timerInterval);
+            clearInterval(questionTimerInterval);
+            
+            let timeLeft = totalTime;
+            
+            timerInterval = setInterval(function() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                
+                timerElement.textContent = `Общее время: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 300) {
+                    timerElement.classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    clearInterval(questionTimerInterval);
+                    timeExpired();
+                }
+                
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Время вышло
+        function timeExpired() {
+            const timeExpiredMessage = document.createElement('div');
+            timeExpiredMessage.className = 'time-expired';
+            timeExpiredMessage.innerHTML = '<h3>Время вышло!</h3><p>Тест автоматически завершен.</p>';
+            
+            questionsContainer.innerHTML = '';
+            questionsContainer.appendChild(timeExpiredMessage);
+            
+            submitTest();
+        }
+
+        // Отображение вопроса
+        function displayQuestion() {
+            if (!currentQuestionSet || !currentQuestionSet.questions) {
+                console.error('❌ Набор вопросов не загружен');
+                return;
+            }
+            
+            if (currentQuestionIndex >= currentQuestionSet.questions.length) {
+                submitTest();
+                return;
+            }
+            
+            const question = currentQuestionSet.questions[currentQuestionIndex];
+            questionsContainer.innerHTML = '';
+            
+            questionCounterElement.textContent = `Вопрос ${currentQuestionIndex + 1} из ${currentQuestionSet.questions.length}`;
+            
+            const questionElement = document.createElement('div');
+            questionElement.className = 'question';
+            
+            const questionText = document.createElement('div');
+            questionText.className = 'question-text';
+            questionText.textContent = question.text;
+            questionElement.appendChild(questionText);
+            
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'options';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                
+                const optionInput = document.createElement('input');
+                optionInput.type = 'radio';
+                optionInput.name = 'question-option';
+                optionInput.value = index;
+                optionInput.id = `option-${index}`;
+                
+                const optionLabel = document.createElement('label');
+                optionLabel.htmlFor = `option-${index}`;
+                optionLabel.textContent = option;
+                
+                optionElement.appendChild(optionInput);
+                optionElement.appendChild(optionLabel);
+                
+                optionElement.addEventListener('click', function() {
+                    document.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    optionElement.classList.add('selected');
+                    optionInput.checked = true;
+                    
+                    userAnswers[currentQuestionIndex] = index;
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            questionElement.appendChild(optionsContainer);
+            questionsContainer.appendChild(questionElement);
+            
+            if (userAnswers[currentQuestionIndex] !== undefined) {
+                const selectedOption = document.querySelector(`input[value="${userAnswers[currentQuestionIndex]}"]`);
+                if (selectedOption) {
+                    selectedOption.checked = true;
+                    selectedOption.parentElement.classList.add('selected');
+                }
+            }
+            
+            nextQuestionBtn.style.display = currentQuestionIndex < currentQuestionSet.questions.length - 1 ? 'block' : 'none';
+            submitTestBtn.style.display = currentQuestionIndex === currentQuestionSet.questions.length - 1 ? 'block' : 'none';
+            
+            startQuestionTimer(question.time || questionTime);
+        }
+
+        // Таймер для вопроса
+        function startQuestionTimer(time) {
+            clearInterval(questionTimerInterval);
+            
+            remainingQuestionTime = time;
+            updateQuestionTimerDisplay();
+            
+            questionTimerInterval = setInterval(function() {
+                remainingQuestionTime--;
+                updateQuestionTimerDisplay();
+                
+                if (remainingQuestionTime <= 0) {
+                    clearInterval(questionTimerInterval);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimerDisplay() {
+            const minutes = Math.floor(remainingQuestionTime / 60);
+            const seconds = remainingQuestionTime % 60;
+            questionTimerElement.textContent = `Время на вопрос: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (remainingQuestionTime <= 10) {
+                questionTimerElement.classList.add('warning');
+            } else {
+                questionTimerElement.classList.remove('warning');
+            }
+        }
+
+        // Следующий вопрос
+        function nextQuestion() {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        // Завершение теста
+        function submitTest() {
+            clearInterval(timerInterval);
+            clearInterval(questionTimerInterval);
+            
+            const results = calculateResults();
+            saveTestResult(results);
+            saveUserAnswers(results);
+            displayResults(results);
+            showResultsSection();
+        }
+
+        // Расчет результатов
+        function calculateResults() {
+            if (!currentQuestionSet || !currentQuestionSet.questions) {
+                return {
+                    score: 0,
+                    correctAnswers: 0,
+                    totalQuestions: 0,
+                    percentage: 0
+                };
+            }
+            
+            let correctAnswers = 0;
+            const totalQuestions = currentQuestionSet.questions.length;
+            
+            const results = {
+                userId: currentUser.id,
+                userName: currentUser.login,
+                userUnit: currentUser.unit || 'none',
+                userRole: currentUser.role,
+                questionSetId: currentQuestionSet.id,
+                questionSetName: currentQuestionSet.name,
+                assignmentId: selectedAssignment ? selectedAssignment.assignment.id : null,
+                answers: [],
+                score: 0,
+                correctAnswers: 0,
+                totalQuestions: totalQuestions,
+                percentage: 0,
+                timestamp: new Date().toISOString()
+            };
+            
+            currentQuestionSet.questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                
+                if (isCorrect) {
+                    correctAnswers++;
+                }
+                
+                results.answers.push({
+                    question: question.text,
+                    userAnswer: userAnswer !== undefined ? question.options[userAnswer] : 'Не отвечено',
+                    correctAnswer: question.options[question.correctAnswer],
+                    isCorrect: isCorrect,
+                    isAnswered: userAnswer !== undefined
+                });
+            });
+            
+            results.correctAnswers = correctAnswers;
+            results.score = correctAnswers;
+            results.percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            return results;
+        }
+
+        // Сохранение ответов пользователя
+        async function saveUserAnswers(results) {
+            try {
+                const userAnswer = {
+                    userId: currentUser.id,
+                    userName: currentUser.login,
+                    userUnit: currentUser.unit || 'none',
+                    userRole: currentUser.role,
+                    questionSetId: currentQuestionSet.id,
+                    questionSetName: currentQuestionSet.name,
+                    answers: results.answers,
+                    timestamp: new Date().toISOString(),
+                    mskTime: getMoscowTime()
+                };
+                
+                await saveUserAnswer(userAnswer);
+                console.log('✅ Ответы пользователя сохранены');
+            } catch (error) {
+                console.error('❌ Ошибка сохранения ответов пользователя:', error);
+            }
+        }
+
+        // Получение московского времени
+        function getMoscowTime() {
+            const now = new Date();
+            const mskOffset = 3 * 60; // MSK UTC+3 в минутах
+            const localOffset = now.getTimezoneOffset();
+            const mskTime = new Date(now.getTime() + (mskOffset + localOffset) * 60000);
+            
+            return mskTime.toLocaleString('ru-RU', {
+                timeZone: 'Europe/Moscow',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Отображение результатов
+        function displayResults(results) {
+            currentUserElement.textContent = currentUser.login;
+            currentUnitElement.textContent = getUnitDisplayName(currentUser.unit || 'none');
+            scoreElement.textContent = `${results.score} из ${results.totalQuestions}`;
+            
+            if (results.percentage >= 80) {
+                resultMessageElement.textContent = 'Отличный результат!';
+            } else if (results.percentage >= 60) {
+                resultMessageElement.textContent = 'Хороший результат!';
+            } else {
+                resultMessageElement.textContent = 'Вам нужно больше практики.';
+            }
+            
+            resultsSummaryElement.innerHTML = `
+                <div class="summary-item">
+                    <div class="summary-value">${results.percentage}%</div>
+                    <div class="summary-label">Правильных ответов</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${results.correctAnswers}</div>
+                    <div class="summary-label">Правильных</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${results.totalQuestions - results.correctAnswers}</div>
+                    <div class="summary-label">Неправильных</div>
+                </div>
+            `;
+            
+            resultsDetailsElement.innerHTML = '';
+            
+            results.answers.forEach((answer, index) => {
+                const resultItem = document.createElement('div');
+                
+                if (answer.isCorrect) {
+                    resultItem.className = 'result-item correct';
+                } else if (answer.isAnswered) {
+                    resultItem.className = 'result-item incorrect';
+                } else {
+                    resultItem.className = 'result-item unanswered';
+                }
+                
+                const userAnswerClass = answer.isCorrect ? 'user-answer correct' : 'user-answer';
+                
+                let answerHtml = `
+                    <div class="result-question">${index + 1}. ${answer.question}</div>
+                    <div class="result-answer">Ваш ответ: <span class="${userAnswerClass}">${answer.userAnswer}</span></div>
+                `;
+                
+                if (!answer.isCorrect) {
+                    answerHtml += `<div class="result-answer">Правильный ответ: <span class="correct-answer">${answer.correctAnswer}</span></div>`;
+                }
+                
+                if (!answer.isAnswered) {
+                    answerHtml += `<div class="result-answer">Вы не ответили на этот вопрос</div>`;
+                }
+                
+                resultItem.innerHTML = answerHtml;
+                resultsDetailsElement.appendChild(resultItem);
+            });
+            
+            restartTestBtn.classList.add('hidden');
+        }
+
+        // Перезапуск теста
+        function restartTest() {
+            showTestSelectionSection();
+        }
+
+        // Админ-функции
+        async function loadAdminData() {
+            await loadUsersList();
+            await loadQuestionSetsList();
+            await loadAssignmentsList();
+            await loadTestResultsList();
+            await loadUserAnswersList();
+        }
+
+        // Управление пользователями - ИСПРАВЛЕННАЯ ФУНКЦИЯ
+        async function loadUsersList() {
+            try {
+                const users = await loadUsers();
+                const usersList = document.getElementById('users-list');
+                usersList.innerHTML = '';
+                
+                const regularUsers = users.filter(user => user.role !== 'admin');
+                
+                if (regularUsers.length === 0) {
+                    usersList.innerHTML = '<p>Пользователи не найдены</p>';
+                    return;
+                }
+                
+                regularUsers.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-item';
+                    
+                    let roleDisplayName = '';
+                    let roleClass = '';
+                    
+                    if (user.role === 'doctor') {
+                        roleDisplayName = 'Полевой Врач';
+                        roleClass = 'role-doctor';
+                    } else if (user.role === 'medic') {
+                        roleDisplayName = 'Полевой Фельдшер';
+                        roleClass = 'role-medic';
+                    } else if (user.role === 'sanitary') {
+                        roleDisplayName = 'Полевой Санитар';
+                        roleClass = 'role-sanitary';
+                    } else {
+                        roleDisplayName = user.role;
+                        roleClass = 'role-user';
+                    }
+                    
+                    const unitDisplayName = getUnitDisplayName(user.unit || 'none');
+                    const unitClass = getUnitClass(user.unit || 'none');
+                    
+                    userItem.innerHTML = `
+                        <div class="user-header">
+                            <div>
+                                <strong>${user.login}</strong>
+                                <span class="user-role ${roleClass}">${roleDisplayName}</span>
+                                <span class="user-unit ${unitClass}">${unitDisplayName}</span>
+                            </div>
+                            <div class="user-actions">
+                                <button class="btn btn-warning edit-user" data-id="${user.id}">Редактировать</button>
+                                <button class="btn btn-danger delete-user" data-id="${user.id}">Удалить</button>
+                            </div>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-stats">ID: ${user.id}</div>
+                        </div>
+                    `;
+                    
+                    usersList.appendChild(userItem);
+                });
+                
+                // ИСПРАВЛЕННЫЙ ОБРАБОТЧИК СОБЫТИЙ ДЛЯ УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЕЙ
+                usersList.querySelectorAll('.delete-user').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const userId = this.getAttribute('data-id');
+                        deleteUserById(userId);
+                    });
+                });
+                
+                usersList.querySelectorAll('.edit-user').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const userId = this.getAttribute('data-id');
+                        editUser(userId);
+                    });
+                });
+                
+                updateUserSelect();
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки списка пользователей:', error);
+            }
+        }
+
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ УДАЛЕНИЯ ПОЛЬЗОВАТЕЛЯ
+        async function deleteUserById(userId) {
+            if (!confirm('Вы уверены, что хотите удалить этого пользователя? Все назначенные тесты также будут удалены.')) {
+                return;
+            }
+            
+            try {
+                // Удаляем все назначения пользователя
+                const assignments = await loadAssignments();
+                const userAssignments = assignments.filter(a => a.userId === userId);
+                
+                for (const assignment of userAssignments) {
+                    await deleteAssignment(assignment.id);
+                }
+                
+                // Удаляем пользователя
+                await deleteUser(userId);
+                await loadUsersList();
+                
+            } catch (error) {
+                console.error('❌ Ошибка удаления пользователя:', error);
+                alert('Ошибка при удалении пользователя');
+            }
+        }
+
+        async function addUser() {
+            const login = document.getElementById('new-user-login').value;
+            const password = document.getElementById('new-user-password').value;
+            
+            if (!login || !password) {
+                document.getElementById('user-add-error').textContent = 'Заполните все поля';
+                document.getElementById('user-add-error').classList.remove('hidden');
+                return;
+            }
+            
+            try {
+                const users = await loadUsers();
+                
+                const existingUser = users.find(u => u.login === login);
+                if (existingUser) {
+                    document.getElementById('user-add-error').textContent = 'Пользователь с таким логином уже существует';
+                    document.getElementById('user-add-error').classList.remove('hidden');
+                    return;
+                }
+                
+                const newUser = {
+                    login: login,
+                    password: password,
+                    role: 'doctor',
+                    unit: 'none',
+                    createdAt: new Date().toISOString()
+                };
+                
+                await saveUser(newUser);
+                
+                document.getElementById('user-add-success').classList.remove('hidden');
+                document.getElementById('user-add-error').classList.add('hidden');
+                document.getElementById('new-user-login').value = '';
+                document.getElementById('new-user-password').value = '';
+                
+                await loadUsersList();
+                
+                setTimeout(() => {
+                    document.getElementById('user-add-success').classList.add('hidden');
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Ошибка добавления пользователя:', error);
+                document.getElementById('user-add-error').textContent = 'Ошибка при добавлении пользователя';
+                document.getElementById('user-add-error').classList.remove('hidden');
+            }
+        }
+
+        async function editUser(userId) {
+            try {
+                const users = await loadUsers();
+                const user = users.find(u => u.id === userId);
+                
+                if (!user) {
+                    alert('Пользователь не найден');
+                    return;
+                }
+                
+                document.getElementById('edit-user-login').value = user.login;
+                document.getElementById('edit-user-password').value = '';
+                document.getElementById('edit-user-role').value = user.role;
+                document.getElementById('edit-user-unit').value = user.unit || 'none';
+                
+                document.getElementById('user-editor').classList.remove('hidden');
+                document.getElementById('save-user').setAttribute('data-id', userId);
+                
+            } catch (error) {
+                console.error('❌ Ошибка редактирования пользователя:', error);
+                alert('Ошибка при загрузке данных пользователя');
+            }
+        }
+
+        async function saveUserChanges() {
+            const userId = document.getElementById('save-user').getAttribute('data-id');
+            const login = document.getElementById('edit-user-login').value;
+            const password = document.getElementById('edit-user-password').value;
+            const role = document.getElementById('edit-user-role').value;
+            const unit = document.getElementById('edit-user-unit').value;
+            
+            if (!login) {
+                alert('Заполните поле логина');
+                return;
+            }
+            
+            try {
+                const users = await loadUsers();
+                const userIndex = users.findIndex(u => u.id === userId);
+                
+                if (userIndex === -1) {
+                    alert('Пользователь не найден');
+                    return;
+                }
+                
+                const loginExists = users.some(u => u.id !== userId && u.login === login);
+                if (loginExists) {
+                    alert('Пользователь с таким логином уже существует');
+                    return;
+                }
+                
+                const updatedUser = {
+                    ...users[userIndex],
+                    login: login,
+                    role: role,
+                    unit: unit
+                };
+                
+                if (password) {
+                    updatedUser.password = password;
+                }
+                
+                await saveUser(updatedUser);
+                
+                document.getElementById('user-editor').classList.add('hidden');
+                await loadUsersList();
+                
+            } catch (error) {
+                console.error('❌ Ошибка сохранения пользователя:', error);
+                alert('Ошибка при сохранении пользователя');
+            }
+        }
+
+        function cancelUserEdit() {
+            document.getElementById('user-editor').classList.add('hidden');
+        }
+
+        function updateUserSelect() {
+            const userSelect = document.getElementById('assign-user');
+            userSelect.innerHTML = '<option value="">-- Выберите пользователя --</option>';
+            
+            loadUsers().then(users => {
+                const regularUsers = users.filter(user => user.role !== 'admin');
+                
+                regularUsers.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = `${user.login} (${getUnitDisplayName(user.unit || 'none')}, ${getRoleDisplayName(user.role)})`;
+                    userSelect.appendChild(option);
+                });
+            });
+        }
+
+        function getRoleDisplayName(role) {
+            const roleNames = {
+                'doctor': 'Полевой Врач',
+                'medic': 'Полевой Фельдшер',
+                'sanitary': 'Полевой Санитар'
+            };
+            return roleNames[role] || role;
+        }
+
+        // Управление наборами вопросов
+        async function loadQuestionSetsList() {
+            try {
+                const questionSets = await loadQuestionSets();
+                const questionSetsSelect = document.getElementById('question-sets');
+                questionSetsSelect.innerHTML = '<option value="">-- Выберите набор --</option>';
+                
+                questionSets.forEach(qs => {
+                    const option = document.createElement('option');
+                    option.value = qs.id;
+                    option.textContent = `${qs.name} (${qs.totalTime || 30} мин)`;
+                    questionSetsSelect.appendChild(option);
+                });
+                
+                updateQuestionSetSelect();
+                updateAnswersTestSelect();
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки списка наборов вопросов:', error);
+            }
+        }
+
+        async function addQuestionSet() {
+            const name = document.getElementById('question-set-name').value;
+            const totalTimeValue = parseInt(document.getElementById('question-set-time').value) || 30;
+            
+            if (!name) {
+                alert('Введите название набора вопросов');
+                return;
+            }
+            
+            try {
+                const questionSets = await loadQuestionSets();
+                
+                const existingSet = questionSets.find(qs => qs.name === name);
+                if (existingSet) {
+                    alert('Набор вопросов с таким названием уже существует');
+                    return;
+                }
+                
+                const newQuestionSet = {
+                    name: name,
+                    totalTime: totalTimeValue,
+                    questions: []
+                };
+                
+                await saveQuestionSet(newQuestionSet);
+                
+                document.getElementById('question-set-name').value = '';
+                document.getElementById('question-set-time').value = '30';
+                await loadQuestionSetsList();
+                
+            } catch (error) {
+                console.error('❌ Ошибка добавления набора вопросов:', error);
+                alert('Ошибка при создании набора вопросов');
+            }
+        }
+
+        async function loadQuestionsForSet() {
+            const questionSetId = document.getElementById('question-sets').value;
+            
+            if (!questionSetId) {
+                document.getElementById('questions-list').innerHTML = '';
+                document.getElementById('question-editor').classList.add('hidden');
+                document.getElementById('add-question').style.display = 'none';
+                return;
+            }
+            
+            try {
+                const questionSets = await loadQuestionSets();
+                const questionSet = questionSets.find(qs => qs.id === questionSetId);
+                
+                if (!questionSet) {
+                    alert('Набор вопросов не найден');
+                    return;
+                }
+                
+                displayQuestionsList(questionSet);
+                document.getElementById('add-question').style.display = 'block';
+                document.getElementById('add-question').setAttribute('data-set-id', questionSetId);
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки вопросов:', error);
+                alert('Ошибка при загрузке вопросов');
+            }
+        }
+
+        function displayQuestionsList(questionSet) {
+            const questionsList = document.getElementById('questions-list');
+            questionsList.innerHTML = '';
+            
+            const setInfo = document.createElement('div');
+            setInfo.className = 'question-item';
+            setInfo.innerHTML = `
+                <div class="question-header">
+                    <div>
+                        <strong>Информация о наборе</strong>
+                    </div>
+                    <div class="question-actions">
+                        <button class="btn btn-danger delete-question-set" data-set-id="${questionSet.id}">Удалить набор</button>
+                    </div>
+                </div>
+                <div class="question-text">
+                    <strong>Название:</strong> ${questionSet.name}<br>
+                    <strong>Общее время теста:</strong> ${questionSet.totalTime || 30} минут<br>
+                    <strong>Количество вопросов:</strong> ${questionSet.questions ? questionSet.questions.length : 0}
+                </div>
+            `;
+            questionsList.appendChild(setInfo);
+            
+            if (!questionSet.questions || questionSet.questions.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.className = 'question-item';
+                emptyMessage.innerHTML = '<p>В этом наборе пока нет вопросов</p>';
+                questionsList.appendChild(emptyMessage);
+                return;
+            }
+            
+            questionSet.questions.forEach((question, index) => {
+                const questionItem = document.createElement('div');
+                questionItem.className = 'question-item';
+                
+                questionItem.innerHTML = `
+                    <div class="question-header">
+                        <div>
+                            <strong>Вопрос ${index + 1}</strong>
+                        </div>
+                        <div class="question-actions">
+                            <button class="btn btn-warning edit-question" data-set-id="${questionSet.id}" data-index="${index}">Редактировать</button>
+                            <button class="btn btn-danger delete-question" data-set-id="${questionSet.id}" data-index="${index}">Удалить</button>
+                        </div>
+                    </div>
+                    <div class="question-text">${question.text}</div>
+                    <div class="question-options">
+                        <strong>Варианты ответов:</strong>
+                        <ol>
+                            ${question.options.map((option, optIndex) => `
+                                <li>${option} ${optIndex === question.correctAnswer ? '✓' : ''}</li>
+                            `).join('')}
+                        </ol>
+                    </div>
+                    <div class="question-time">Время на вопрос: ${question.time || questionTime} сек.</div>
+                `;
+                
+                questionsList.appendChild(questionItem);
+            });
+            
+            // ИСПРАВЛЕННЫЙ ОБРАБОТЧИК СОБЫТИЙ ДЛЯ УДАЛЕНИЯ ВОПРОСОВ
+            questionsList.querySelectorAll('.delete-question').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const questionSetId = this.getAttribute('data-set-id');
+                    const questionIndex = parseInt(this.getAttribute('data-index'));
+                    deleteQuestion(questionSetId, questionIndex);
+                });
+            });
+            
+            questionsList.querySelectorAll('.edit-question').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const questionSetId = this.getAttribute('data-set-id');
+                    const questionIndex = parseInt(this.getAttribute('data-index'));
+                    editQuestion(questionSetId, questionIndex);
+                });
+            });
+            
+            questionsList.querySelectorAll('.delete-question-set').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const questionSetId = this.getAttribute('data-set-id');
+                    deleteQuestionSetById(questionSetId);
+                });
+            });
+        }
+
+        async function deleteQuestionSetById(questionSetId) {
+            if (!confirm('Вы уверены, что хотите удалить этот набор вопросов? Это действие нельзя отменить.')) {
+                return;
+            }
+            
+            try {
+                const assignments = await loadAssignments();
+                const assignmentsToDelete = assignments.filter(a => a.questionSetId === questionSetId);
+                
+                for (const assignment of assignmentsToDelete) {
+                    await deleteAssignment(assignment.id);
+                }
+                
+                await deleteQuestionSet(questionSetId);
+                
+                document.getElementById('question-sets').value = '';
+                document.getElementById('questions-list').innerHTML = '';
+                document.getElementById('question-editor').classList.add('hidden');
+                document.getElementById('add-question').style.display = 'none';
+                
+                await loadQuestionSetsList();
+                await loadAssignmentsList();
+                
+                alert('Набор вопросов успешно удален');
+                
+            } catch (error) {
+                console.error('❌ Ошибка удаления набора вопросов:', error);
+                alert('Ошибка при удалении набора вопросов');
+            }
+        }
+
+        function addNewQuestion() {
+            const questionSetId = document.getElementById('add-question').getAttribute('data-set-id');
+            
+            if (!questionSetId) {
+                alert('Сначала выберите набор вопросов');
+                return;
+            }
+            
+            document.getElementById('edit-question-text').value = '';
+            document.getElementById('options-container').innerHTML = '';
+            document.getElementById('correct-answer').innerHTML = '<option value="">-- Выберите правильный ответ --</option>';
+            document.getElementById('question-time').value = questionTime;
+            
+            addOption();
+            addOption();
+            
+            document.getElementById('question-editor').classList.remove('hidden');
+            document.getElementById('save-question').setAttribute('data-set-id', questionSetId);
+            document.getElementById('save-question').setAttribute('data-index', '-1');
+        }
+
+        function addOption() {
+            const optionsContainer = document.getElementById('options-container');
+            const optionIndex = optionsContainer.children.length;
+            
+            const optionEditor = document.createElement('div');
+            optionEditor.className = 'option-editor';
+            
+            optionEditor.innerHTML = `
+                <input type="text" class="option-input" placeholder="Вариант ответа ${optionIndex + 1}">
+                <button class="btn btn-danger remove-option">×</button>
+            `;
+            
+            optionsContainer.appendChild(optionEditor);
+            
+            updateCorrectAnswerOptions();
+            
+            optionEditor.querySelector('.remove-option').addEventListener('click', function() {
+                optionEditor.remove();
+                updateCorrectAnswerOptions();
+            });
+        }
+
+        function updateCorrectAnswerOptions() {
+            const correctAnswerSelect = document.getElementById('correct-answer');
+            const options = document.querySelectorAll('.option-input');
+            
+            correctAnswerSelect.innerHTML = '<option value="">-- Выберите правильный ответ --</option>';
+            
+            options.forEach((optionInput, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = optionInput.value || `Вариант ${index + 1}`;
+                correctAnswerSelect.appendChild(option);
+            });
+        }
+
+        async function editQuestion(questionSetId, questionIndex) {
+            try {
+                const questionSets = await loadQuestionSets();
+                const questionSet = questionSets.find(qs => qs.id === questionSetId);
+                
+                if (!questionSet || !questionSet.questions || !questionSet.questions[questionIndex]) {
+                    alert('Вопрос не найден');
+                    return;
+                }
+                
+                const question = questionSet.questions[questionIndex];
+                
+                document.getElementById('edit-question-text').value = question.text;
+                document.getElementById('question-time').value = question.time || questionTime;
+                
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                
+                question.options.forEach((option, index) => {
+                    const optionEditor = document.createElement('div');
+                    optionEditor.className = 'option-editor';
+                    
+                    optionEditor.innerHTML = `
+                        <input type="text" class="option-input" value="${option}" placeholder="Вариант ответа ${index + 1}">
+                        <button class="btn btn-danger remove-option">×</button>
+                    `;
+                    
+                    optionsContainer.appendChild(optionEditor);
+                    
+                    optionEditor.querySelector('.remove-option').addEventListener('click', function() {
+                        optionEditor.remove();
+                        updateCorrectAnswerOptions();
+                    });
+                });
+                
+                updateCorrectAnswerOptions();
+                document.getElementById('correct-answer').value = question.correctAnswer;
+                
+                document.getElementById('question-editor').classList.remove('hidden');
+                document.getElementById('save-question').setAttribute('data-set-id', questionSetId);
+                document.getElementById('save-question').setAttribute('data-index', questionIndex.toString());
+                
+            } catch (error) {
+                console.error('❌ Ошибка редактирования вопроса:', error);
+                alert('Ошибка при загрузке вопроса');
+            }
+        }
+
+        async function saveQuestionChanges() {
+            const questionSetId = document.getElementById('save-question').getAttribute('data-set-id');
+            const questionIndex = parseInt(document.getElementById('save-question').getAttribute('data-index'));
+            const questionText = document.getElementById('edit-question-text').value;
+            const correctAnswer = parseInt(document.getElementById('correct-answer').value);
+            const questionTimeValue = parseInt(document.getElementById('question-time').value) || questionTime;
+            
+            const optionInputs = document.querySelectorAll('.option-input');
+            const options = Array.from(optionInputs).map(input => input.value.trim()).filter(value => value !== '');
+            
+            if (!questionText) {
+                alert('Введите текст вопроса');
+                return;
+            }
+            
+            if (options.length < 2) {
+                alert('Добавьте хотя бы два варианта ответа');
+                return;
+            }
+            
+            if (isNaN(correctAnswer) || correctAnswer < 0 || correctAnswer >= options.length) {
+                alert('Выберите правильный ответ из списка');
+                return;
+            }
+            
+            try {
+                const questionSets = await loadQuestionSets();
+                const questionSetIndex = questionSets.findIndex(qs => qs.id === questionSetId);
+                
+                if (questionSetIndex === -1) {
+                    alert('Набор вопросов не найден');
+                    return;
+                }
+                
+                const updatedQuestion = {
+                    text: questionText,
+                    options: options,
+                    correctAnswer: correctAnswer,
+                    time: questionTimeValue
+                };
+                
+                if (questionIndex === -1) {
+                    if (!questionSets[questionSetIndex].questions) {
+                        questionSets[questionSetIndex].questions = [];
+                    }
+                    questionSets[questionSetIndex].questions.push(updatedQuestion);
+                } else {
+                    questionSets[questionSetIndex].questions[questionIndex] = updatedQuestion;
+                }
+                
+                await saveQuestionSet(questionSets[questionSetIndex]);
+                
+                document.getElementById('question-editor').classList.add('hidden');
+                await loadQuestionsForSet();
+                
+            } catch (error) {
+                console.error('❌ Ошибка сохранения вопроса:', error);
+                alert('Ошибка при сохранении вопроса');
+            }
+        }
+
+        function cancelQuestionEdit() {
+            document.getElementById('question-editor').classList.add('hidden');
+        }
+
+        async function deleteQuestion(questionSetId, questionIndex) {
+            if (!confirm('Вы уверены, что хотите удалить этот вопрос?')) {
+                return;
+            }
+            
+            try {
+                const questionSets = await loadQuestionSets();
+                const questionSetIndex = questionSets.findIndex(qs => qs.id === questionSetId);
+                
+                if (questionSetIndex === -1) {
+                    alert('Набор вопросов не найден');
+                    return;
+                }
+                
+                if (!questionSets[questionSetIndex].questions || !questionSets[questionSetIndex].questions[questionIndex]) {
+                    alert('Вопрос не найден');
+                    return;
+                }
+                
+                questionSets[questionSetIndex].questions.splice(questionIndex, 1);
+                
+                await saveQuestionSet(questionSets[questionSetIndex]);
+                await loadQuestionsForSet();
+                
+            } catch (error) {
+                console.error('❌ Ошибка удаления вопроса:', error);
+                alert('Ошибка при удалении вопроса');
+            }
+        }
+
+        function updateQuestionSetSelect() {
+            const questionSetSelect = document.getElementById('assign-question-set');
+            questionSetSelect.innerHTML = '<option value="">-- Выберите набор --</option>';
+            
+            loadQuestionSets().then(questionSets => {
+                questionSets.forEach(qs => {
+                    const option = document.createElement('option');
+                    option.value = qs.id;
+                    option.textContent = `${qs.name} (${qs.totalTime || 30} мин)`;
+                    questionSetSelect.appendChild(option);
+                });
+            });
+        }
+
+        function updateAnswersTestSelect() {
+            const testSelect = document.getElementById('filter-answers-test');
+            testSelect.innerHTML = '<option value="">Все тесты</option>';
+            
+            loadQuestionSets().then(questionSets => {
+                questionSets.forEach(qs => {
+                    const option = document.createElement('option');
+                    option.value = qs.id;
+                    option.textContent = qs.name;
+                    testSelect.appendChild(option);
+                });
+            });
+        }
+
+        // Назначение тестов
+        async function loadAssignmentsList() {
+            try {
+                const assignments = await loadAssignments();
+                const assignmentsList = document.getElementById('assignments-list');
+                assignmentsList.innerHTML = '';
+                
+                const filterUnit = document.getElementById('filter-unit').value;
+                const filterRole = document.getElementById('filter-role').value;
+                
+                let filteredAssignments = assignments;
+                
+                if (filterUnit) {
+                    const users = await loadUsers();
+                    filteredAssignments = filteredAssignments.filter(assignment => {
+                        const user = users.find(u => u.id === assignment.userId);
+                        return user && user.unit === filterUnit;
+                    });
+                }
+                
+                if (filterRole) {
+                    const users = await loadUsers();
+                    filteredAssignments = filteredAssignments.filter(assignment => {
+                        const user = users.find(u => u.id === assignment.userId);
+                        return user && user.role === filterRole;
+                    });
+                }
+                
+                if (filteredAssignments.length === 0) {
+                    assignmentsList.innerHTML = '<p>Назначения не найдены</p>';
+                    return;
+                }
+                
+                for (const assignment of filteredAssignments) {
+                    const users = await loadUsers();
+                    const questionSets = await loadQuestionSets();
+                    
+                    const user = users.find(u => u.id === assignment.userId);
+                    const questionSet = questionSets.find(qs => qs.id === assignment.questionSetId);
+                    
+                    const assignmentItem = document.createElement('div');
+                    assignmentItem.className = 'assignment-item';
+                    
+                    assignmentItem.innerHTML = `
+                        <div>
+                            <strong>${user ? user.login : 'Неизвестный пользователь'} (${user ? getUnitDisplayName(user.unit || 'none') : 'Неизвестно'}, ${user ? getRoleDisplayName(user.role) : 'Неизвестно'})</strong> - ${questionSet ? `${questionSet.name} (${questionSet.totalTime || 30} мин)` : 'Неизвестный набор'}
+                        </div>
+                        <div>
+                            <button class="btn btn-danger delete-assignment" data-id="${assignment.id}">Удалить</button>
+                        </div>
+                    `;
+                    
+                    assignmentsList.appendChild(assignmentItem);
+                }
+                
+                // ИСПРАВЛЕННЫЙ ОБРАБОТЧИК СОБЫТИЙ ДЛЯ УДАЛЕНИЯ НАЗНАЧЕНИЙ
+                assignmentsList.querySelectorAll('.delete-assignment').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const assignmentId = this.getAttribute('data-id');
+                        deleteAssignmentById(assignmentId);
+                    });
+                });
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки списка назначений:', error);
+            }
+        }
+
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ УДАЛЕНИЯ НАЗНАЧЕНИЯ
+        async function deleteAssignmentById(assignmentId) {
+            if (!confirm('Вы уверены, что хотите удалить это назначение?')) {
+                return;
+            }
+            
+            try {
+                await deleteAssignment(assignmentId);
+                await loadAssignmentsList(); // Обновляем список после удаления
+            } catch (error) {
+                console.error('❌ Ошибка удаления назначения:', error);
+                alert('Ошибка при удалении назначения');
+            }
+        }
+
+        async function assignTest() {
+            const userId = document.getElementById('assign-user').value;
+            const questionSetId = document.getElementById('assign-question-set').value;
+            
+            if (!userId || !questionSetId) {
+                alert('Выберите пользователя и набор вопросов');
+                return;
+            }
+            
+            try {
+                const assignments = await loadAssignments();
+                
+                const existingAssignment = assignments.find(a => a.userId === userId && a.questionSetId === questionSetId);
+                if (existingAssignment) {
+                    alert('Этот тест уже назначен пользователю');
+                    return;
+                }
+                
+                const newAssignment = {
+                    userId: userId,
+                    questionSetId: questionSetId,
+                    assignedAt: new Date().toISOString()
+                };
+                
+                await saveAssignment(newAssignment);
+                
+                document.getElementById('assign-user').value = '';
+                document.getElementById('assign-question-set').value = '';
+                
+                await loadAssignmentsList();
+                
+            } catch (error) {
+                console.error('❌ Ошибка назначения теста:', error);
+                alert('Ошибка при назначении теста');
+            }
+        }
+
+        // Результаты тестов
+        async function loadTestResultsList() {
+            try {
+                const testResults = await loadTestResults();
+                const testResultsList = document.getElementById('test-results-list');
+                testResultsList.innerHTML = '';
+                
+                if (testResults.length === 0) {
+                    testResultsList.innerHTML = '<p>Результаты тестов не найдены</p>';
+                    return;
+                }
+                
+                testResults.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                for (const result of testResults) {
+                    const users = await loadUsers();
+                    const questionSets = await loadQuestionSets();
+                    
+                    const user = users.find(u => u.id === result.userId);
+                    const questionSet = questionSets.find(qs => qs.id === result.questionSetId);
+                    
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+                    
+                    const date = new Date(result.timestamp).toLocaleString('ru-RU');
+                    
+                    resultItem.innerHTML = `
+                        <div class="result-header">
+                            <div>
+                                <strong>${user ? user.login : 'Неизвестный пользователь'} (${user ? getUnitDisplayName(user.unit || 'none') : 'Неизвестно'}, ${user ? getRoleDisplayName(user.role) : 'Неизвестно'})</strong> - ${questionSet ? `${questionSet.name} (${questionSet.totalTime || 30} мин)` : 'Неизвестный набор'}
+                            </div>
+                            <div class="result-score">${result.score}/${result.totalQuestions} (${result.percentage}%)</div>
+                        </div>
+                        <div class="result-info">
+                            <div>Дата прохождения: ${date}</div>
+                            <div>Правильных ответов: ${result.correctAnswers} из ${result.totalQuestions}</div>
+                        </div>
+                        <div class="result-details">
+                            <button class="btn btn-secondary view-result-details" data-id="${result.id}">Просмотреть детали</button>
+                        </div>
+                    `;
+                    
+                    testResultsList.appendChild(resultItem);
+                }
+                
+                testResultsList.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('view-result-details')) {
+                        const resultId = e.target.getAttribute('data-id');
+                        viewResultDetails(resultId);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки результатов тестов:', error);
+            }
+        }
+
+        async function viewResultDetails(resultId) {
+            try {
+                const testResults = await loadTestResults();
+                const result = testResults.find(r => r.id === resultId);
+                
+                if (!result) {
+                    alert('Результат не найден');
+                    return;
+                }
+                
+                let detailsHtml = `
+                    <h3>Детали результата теста</h3>
+                    <p><strong>Пользователь:</strong> ${result.userName}</p>
+                    <p><strong>Подразделение:</strong> ${getUnitDisplayName(result.userUnit || 'none')}</p>
+                    <p><strong>Роль:</strong> ${getRoleDisplayName(result.userRole)}</p>
+                    <p><strong>Набор вопросов:</strong> ${result.questionSetName}</p>
+                    <p><strong>Результат:</strong> ${result.score}/${result.totalQuestions} (${result.percentage}%)</p>
+                    <p><strong>Дата прохождения:</strong> ${new Date(result.timestamp).toLocaleString('ru-RU')}</p>
+                    <hr>
+                    <h4>Ответы на вопросы:</h4>
+                `;
+                
+                result.answers.forEach((answer, index) => {
+                    detailsHtml += `
+                        <div class="result-detail-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                            <p><strong>Вопрос ${index + 1}:</strong> ${answer.question}</p>
+                            <p><strong>Ваш ответ:</strong> ${answer.userAnswer}</p>
+                            ${!answer.isCorrect ? `<p><strong>Правильный ответ:</strong> ${answer.correctAnswer}</p>` : ''}
+                            <p><strong>Статус:</strong> ${answer.isCorrect ? 'Правильно' : 'Неправильно'}</p>
+                        </div>
+                        <hr>
+                    `;
+                });
+                
+                alert(detailsHtml);
+                
+            } catch (error) {
+                console.error('❌ Ошибка просмотра деталей результата:', error);
+                alert('Ошибка при загрузке деталей результата');
+            }
+        }
+
+        // Ответы пользователей
+        async function loadUserAnswersList() {
+            try {
+                const userAnswers = await loadUserAnswers();
+                const userAnswersList = document.getElementById('user-answers-list');
+                userAnswersList.innerHTML = '';
+                
+                const filterUnit = document.getElementById('filter-answers-unit').value;
+                const filterRole = document.getElementById('filter-answers-role').value;
+                const filterTest = document.getElementById('filter-answers-test').value;
+                
+                let filteredAnswers = userAnswers;
+                
+                if (filterUnit) {
+                    filteredAnswers = filteredAnswers.filter(answer => answer.userUnit === filterUnit);
+                }
+                
+                if (filterRole) {
+                    filteredAnswers = filteredAnswers.filter(answer => answer.userRole === filterRole);
+                }
+                
+                if (filterTest) {
+                    filteredAnswers = filteredAnswers.filter(answer => answer.questionSetId === filterTest);
+                }
+                
+                if (filteredAnswers.length === 0) {
+                    userAnswersList.innerHTML = '<p>Ответы пользователей не найдены</p>';
+                    return;
+                }
+                
+                filteredAnswers.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                for (const answer of filteredAnswers) {
+                    const answerItem = document.createElement('div');
+                    answerItem.className = 'user-answer-item';
+                    
+                    const date = new Date(answer.timestamp).toLocaleString('ru-RU');
+                    
+                    answerItem.innerHTML = `
+                        <div class="user-answer-header">
+                            <div>
+                                <strong>${answer.userName}</strong>
+                                <span class="user-role ${'role-' + answer.userRole}">${getRoleDisplayName(answer.userRole)}</span>
+                                <span class="user-unit ${getUnitClass(answer.userUnit)}">${getUnitDisplayName(answer.userUnit)}</span>
+                            </div>
+                            <div class="user-answer-info">
+                                <div><strong>Тест:</strong> ${answer.questionSetName}</div>
+                                <div><strong>Время прохождения:</strong> ${answer.MSKTime || date}</div>
+                            </div>
+                        </div>
+                        <div class="user-answer-details">
+                            <h4>Ответы на вопросы:</h4>
+                    `;
+                    
+                    answer.answers.forEach((userAnswer, index) => {
+                        const answerClass = userAnswer.isCorrect ? 'correct' : (userAnswer.isAnswered ? 'incorrect' : 'unanswered');
+                        
+                        answerItem.innerHTML += `
+                            <div class="answer-question ${answerClass}">
+                                <div><strong>Вопрос ${index + 1}:</strong> ${userAnswer.question}</div>
+                                <div><strong>Ответ пользователя:</strong> ${userAnswer.userAnswer}</div>
+                                ${!userAnswer.isCorrect ? `<div><strong>Правильный ответ:</strong> ${userAnswer.correctAnswer}</div>` : ''}
+                                <div><strong>Статус:</strong> ${userAnswer.isCorrect ? 'Правильно' : (userAnswer.isAnswered ? 'Неправильно' : 'Не отвечено')}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    answerItem.innerHTML += `</div>`;
+                    userAnswersList.appendChild(answerItem);
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки ответов пользователей:', error);
+                userAnswersList.innerHTML = '<p>Ошибка при загрузке ответов пользователей</p>';
+            }
+        }
+
+        // Сохранение результатов теста
+        async function saveTestResult(results) {
+            try {
+                await saveTestResult(results);
+            } catch (error) {
+                console.error('❌ Ошибка сохранения результата теста:', error);
+            }
+        }
+
+        // Сохранение системных настроек
+        function saveSystemSettings() {
+            saveSettings();
+            alert('Настройки сохранены успешно');
+        }
+    </script>
+</body>
+</html>
