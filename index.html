@@ -579,6 +579,11 @@
             color: white;
         }
         
+        .firebase-no-permission {
+            background-color: #f9ab00;
+            color: black;
+        }
+        
         .user-editor {
             background-color: #f8f9fa;
             border: 1px solid #ddd;
@@ -816,6 +821,35 @@
                 align-items: flex-start;
             }
         }
+        
+        .firebase-config-card {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .firebase-config-card h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .firebase-config-card ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .firebase-config-card li {
+            margin-bottom: 5px;
+        }
+        
+        .firebase-config-card code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -827,6 +861,33 @@
             <p class="description">Система тестирования медицинских знаний</p>
             <button class="btn admin-btn" id="admin-toggle">Режим администратора</button>
         </header>
+        
+        <!-- Инструкция по настройке Firebase -->
+        <div class="firebase-config-card" id="firebase-config-help" style="display: none;">
+            <h3>⚠️ Настройка правил Firebase</h3>
+            <p>Для работы с Firebase необходимо настроить правила безопасности:</p>
+            <ol>
+                <li>Перейдите в <a href="https://console.firebase.google.com/" target="_blank">консоль Firebase</a></li>
+                <li>Выберите проект "korpuss-51mk"</li>
+                <li>В меню слева выберите "Firestore Database"</li>
+                <li>Перейдите на вкладку "Rules"</li>
+                <li>Замените правила на следующие:</li>
+            </ol>
+            <code>
+rules_version = '2';<br>
+service cloud.firestore {<br>
+&nbsp;&nbsp;match /databases/{database}/documents {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;match /{document=**} {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allow read, write: if true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+}
+            </code>
+            <p style="margin-top: 15px; color: #856404;">
+                <strong>Внимание:</strong> Эти правила открывают доступ для всех. Для продакшена настройте более строгие правила.
+            </p>
+            <button class="btn btn-warning" id="hide-firebase-help">Скрыть инструкцию</button>
+        </div>
         
         <!-- Панель пользователя -->
         <div id="user-panel">
@@ -1223,6 +1284,7 @@
         let db;
         let auth;
         let firebaseConnected = false;
+        let firebaseHasPermission = false;
 
         try {
             if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
@@ -1231,28 +1293,51 @@
                 auth = firebase.auth();
                 firebaseConnected = true;
                 console.log("✅ Firebase подключен");
-                updateFirebaseStatus(true);
                 
-                // Создаем администратора по умолчанию
-                createDefaultAdmin();
+                // Проверяем доступность Firestore
+                testFirebaseConnection();
             } else {
                 console.log("⚠️ Firebase не настроен, используется localStorage");
-                updateFirebaseStatus(false);
+                updateFirebaseStatus('disconnected');
             }
         } catch (error) {
             console.error("❌ Ошибка Firebase:", error);
-            updateFirebaseStatus(false);
+            updateFirebaseStatus('disconnected');
+        }
+
+        // Тестирование подключения к Firebase
+        async function testFirebaseConnection() {
+            try {
+                // Пробуем выполнить простой запрос для проверки прав
+                const testQuery = await db.collection('users').limit(1).get();
+                firebaseHasPermission = true;
+                console.log("✅ Firebase права доступа подтверждены");
+                updateFirebaseStatus('connected');
+                
+                // Создаем администратора по умолчанию
+                await createDefaultAdmin();
+            } catch (error) {
+                if (error.code === 'permission-denied') {
+                    console.warn("⚠️ Firebase: недостаточно прав доступа");
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                } else {
+                    console.error("❌ Ошибка проверки подключения Firebase:", error);
+                    updateFirebaseStatus('disconnected');
+                }
+            }
         }
 
         // Функция для создания администратора по умолчанию
         async function createDefaultAdmin() {
+            if (!firebaseConnected || !firebaseHasPermission) return;
+            
             try {
-                if (!firebaseConnected) return;
+                const users = await loadUsers();
+                const adminExists = users.some(user => user.role === 'admin');
                 
-                const usersRef = db.collection('users');
-                const snapshot = await usersRef.where('role', '==', 'admin').get();
-                
-                if (snapshot.empty) {
+                if (!adminExists) {
                     const defaultAdmin = {
                         login: 'admin',
                         password: 'admin123',
@@ -1261,7 +1346,7 @@
                         createdAt: new Date().toISOString()
                     };
                     
-                    await usersRef.add(defaultAdmin);
+                    await saveUser(defaultAdmin);
                     console.log('✅ Администратор по умолчанию создан');
                 }
             } catch (error) {
@@ -1269,11 +1354,16 @@
             }
         }
 
-        function updateFirebaseStatus(connected) {
+        function updateFirebaseStatus(status) {
             const statusElement = document.getElementById('firebase-status');
-            if (connected) {
-                statusElement.textContent = 'Firebase: Подключено';
+            
+            if (status === 'connected') {
+                statusElement.textContent = 'Firebase: Подключено ✓';
                 statusElement.className = 'firebase-status firebase-connected';
+                statusElement.classList.remove('hidden');
+            } else if (status === 'no-permission') {
+                statusElement.textContent = 'Firebase: Нет прав доступа ⚠️';
+                statusElement.className = 'firebase-status firebase-no-permission';
                 statusElement.classList.remove('hidden');
             } else {
                 statusElement.textContent = 'Firebase: Не подключено (локальный режим)';
@@ -1282,10 +1372,24 @@
             }
         }
 
+        function showFirebaseHelp() {
+            const helpElement = document.getElementById('firebase-config-help');
+            if (helpElement) {
+                helpElement.style.display = 'block';
+            }
+        }
+
+        function hideFirebaseHelp() {
+            const helpElement = document.getElementById('firebase-config-help');
+            if (helpElement) {
+                helpElement.style.display = 'none';
+            }
+        }
+
         // Firebase функции
         async function loadUsers() {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return getLocalUsers();
                 }
 
@@ -1306,6 +1410,11 @@
                 
                 return users;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка загрузки пользователей:', error);
                 return getLocalUsers();
             }
@@ -1313,7 +1422,7 @@
 
         async function saveUser(user) {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return saveUserToLocal(user);
                 }
 
@@ -1332,16 +1441,19 @@
                 saveUserToLocal(savedUser);
                 return savedUser;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка сохранения пользователя:', error);
-                // Если ошибка Firebase, сохраняем только в localStorage
-                const localUser = saveUserToLocal(user);
-                throw new Error('Firebase ошибка: ' + error.message);
+                return saveUserToLocal(user);
             }
         }
 
         async function deleteUser(userId) {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     const users = getLocalUsers();
                     const updatedUsers = users.filter(u => u.id !== userId);
                     localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
@@ -1356,14 +1468,23 @@
                 localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
                 
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка удаления пользователя:', error);
-                throw error;
+                
+                // Все равно удаляем из localStorage
+                const users = getLocalUsers();
+                const updatedUsers = users.filter(u => u.id !== userId);
+                localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
             }
         }
 
         async function loadQuestionSets() {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return getLocalQuestionSets();
                 }
 
@@ -1387,6 +1508,11 @@
                 
                 return questionSets;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка загрузки наборов вопросов:', error);
                 return getLocalQuestionSets();
             }
@@ -1394,7 +1520,7 @@
 
         async function saveQuestionSet(questionSet) {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return saveQuestionSetToLocal(questionSet);
                 }
 
@@ -1413,16 +1539,19 @@
                 saveQuestionSetToLocal(savedSet);
                 return savedSet;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка сохранения набора вопросов:', error);
-                // Если ошибка Firebase, сохраняем только в localStorage
-                const localSet = saveQuestionSetToLocal(questionSet);
-                throw new Error('Firebase ошибка: ' + error.message);
+                return saveQuestionSetToLocal(questionSet);
             }
         }
 
         async function deleteQuestionSet(questionSetId) {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     const questionSets = getLocalQuestionSets();
                     const updatedQuestionSets = questionSets.filter(qs => qs.id !== questionSetId);
                     localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
@@ -1437,14 +1566,23 @@
                 localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
                 
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка удаления набора вопросов:', error);
-                throw error;
+                
+                // Все равно удаляем из localStorage
+                const questionSets = getLocalQuestionSets();
+                const updatedQuestionSets = questionSets.filter(qs => qs.id !== questionSetId);
+                localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
             }
         }
 
         async function loadAssignments() {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return getLocalAssignments();
                 }
 
@@ -1465,6 +1603,11 @@
                 
                 return assignments;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка загрузки назначений:', error);
                 return getLocalAssignments();
             }
@@ -1472,7 +1615,7 @@
 
         async function saveAssignment(assignment) {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return saveAssignmentToLocal(assignment);
                 }
 
@@ -1491,16 +1634,19 @@
                 saveAssignmentToLocal(savedAssignment);
                 return savedAssignment;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка сохранения назначения:', error);
-                // Если ошибка Firebase, сохраняем только в localStorage
-                const localAssignment = saveAssignmentToLocal(assignment);
-                throw new Error('Firebase ошибка: ' + error.message);
+                return saveAssignmentToLocal(assignment);
             }
         }
 
         async function deleteAssignment(assignmentId) {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     const assignments = getLocalAssignments();
                     const updatedAssignments = assignments.filter(a => a.id !== assignmentId);
                     localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
@@ -1515,14 +1661,23 @@
                 localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
                 
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка удаления назначения:', error);
-                throw error;
+                
+                // Все равно удаляем из localStorage
+                const assignments = getLocalAssignments();
+                const updatedAssignments = assignments.filter(a => a.id !== assignmentId);
+                localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
             }
         }
 
         async function loadUserAnswers() {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return getLocalUserAnswers();
                 }
 
@@ -1543,6 +1698,11 @@
                 
                 return userAnswers;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка загрузки ответов пользователей:', error);
                 return getLocalUserAnswers();
             }
@@ -1550,7 +1710,7 @@
 
         async function saveUserAnswer(userAnswer) {
             try {
-                if (!firebaseConnected) {
+                if (!firebaseConnected || !firebaseHasPermission) {
                     return saveUserAnswerToLocal(userAnswer);
                 }
 
@@ -1561,10 +1721,13 @@
                 saveUserAnswerToLocal(userAnswer);
                 return userAnswer;
             } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
                 console.error('❌ Ошибка сохранения ответа пользователя:', error);
-                // Если ошибка Firebase, сохраняем только в localStorage
-                const localAnswer = saveUserAnswerToLocal(userAnswer);
-                throw new Error('Firebase ошибка: ' + error.message);
+                return saveUserAnswerToLocal(userAnswer);
             }
         }
 
@@ -1774,6 +1937,7 @@
         const resultsDetailsElement = document.getElementById('results-details');
         const backToUserLoginBtn = document.getElementById('back-to-user-login');
         const backToUserContainer = document.getElementById('back-to-user-container');
+        const hideFirebaseHelpBtn = document.getElementById('hide-firebase-help');
 
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
@@ -1905,6 +2069,10 @@
             document.getElementById('assign-test').addEventListener('click', assignTest);
 
             document.getElementById('save-settings').addEventListener('click', saveSystemSettings);
+
+            if (hideFirebaseHelpBtn) {
+                hideFirebaseHelpBtn.addEventListener('click', hideFirebaseHelp);
+            }
         }
 
         // Аутентификация администратора
