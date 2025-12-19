@@ -1704,12 +1704,12 @@ service cloud.firestore {<br>
     <script>
         // 🔥 КОНФИГУРАЦИЯ FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSyDsuDoY6iFMvM50bx0H1qjX4PrQQk9J1LQ",
-            authDomain: "medical-test-system.firebaseapp.com",
-            projectId: "medical-test-system",
-            storageBucket: "medical-test-system.firebasestorage.app",
-            messagingSenderId: "1094134355386",
-            appId: "1:1094134355386:web:5995c344a6ef01049fb983"
+            apiKey: "AIzaSyBUEmsIq-OSw-TZ0HQ6PuhSg1sS4hgyqpI",
+            authDomain: "ipk-sait.firebaseapp.com",
+            projectId: "ipk-sait",
+            storageBucket: "ipk-sait.firebasestorage.app",
+            messagingSenderId: "219609478674",
+            appId: "1:219609478674:web:a2e9b020cbc46d997e4acb"
         };
 
         // Инициализация Firebase
@@ -1748,6 +1748,8 @@ service cloud.firestore {<br>
                 
                 // Создаем администратора по умолчанию
                 await createDefaultAdmin();
+                // Загружаем настройки сайта
+                await loadSiteSettings();
             } catch (error) {
                 if (error.code === 'permission-denied') {
                     console.warn("⚠️ Firebase: недостаточно прав доступа");
@@ -1815,6 +1817,65 @@ service cloud.firestore {<br>
             const helpElement = document.getElementById('firebase-config-help');
             if (helpElement) {
                 helpElement.style.display = 'none';
+            }
+        }
+
+        // Firebase функции для настроек сайта
+        async function loadSiteSettingsFromFirebase() {
+            try {
+                if (!firebaseConnected || !firebaseHasPermission) {
+                    return null;
+                }
+
+                const doc = await db.collection('siteSettings').doc('global').get();
+                if (doc.exists) {
+                    return doc.data();
+                }
+                
+                // Если настроек нет, создаем настройки по умолчанию
+                const defaultSettings = {
+                    backgroundColor: '#f5f7fa',
+                    textColor: '#333333',
+                    snowEnabled: false,
+                    snowIntensity: 5,
+                    snowColor: '#ffffff',
+                    updatedAt: new Date().toISOString()
+                };
+                
+                await db.collection('siteSettings').doc('global').set(defaultSettings);
+                return defaultSettings;
+            } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
+                console.error('❌ Ошибка загрузки настроек сайта:', error);
+                return null;
+            }
+        }
+
+        async function saveSiteSettingsToFirebase(settings) {
+            try {
+                if (!firebaseConnected || !firebaseHasPermission) {
+                    return null;
+                }
+
+                const settingsWithTimestamp = {
+                    ...settings,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                await db.collection('siteSettings').doc('global').set(settingsWithTimestamp);
+                return settingsWithTimestamp;
+            } catch (error) {
+                if (error.code === 'permission-denied') {
+                    firebaseHasPermission = false;
+                    updateFirebaseStatus('no-permission');
+                    showFirebaseHelp();
+                }
+                console.error('❌ Ошибка сохранения настроек сайта:', error);
+                return null;
             }
         }
 
@@ -2385,6 +2446,7 @@ service cloud.firestore {<br>
         let currentEditingQuestionSetId = null;
         let currentEditingQuestionIndex = null;
         let snowInterval = null;
+        let currentSiteSettings = null;
 
         // DOM элементы
         const userPanel = document.getElementById('user-panel');
@@ -2466,6 +2528,152 @@ service cloud.firestore {<br>
             initModal();
             initColorInputs();
         });
+
+        async function loadSiteSettings() {
+            // Настройки по умолчанию
+            const defaultSettings = {
+                backgroundColor: '#f5f7fa',
+                textColor: '#333333',
+                snowEnabled: false,
+                snowIntensity: 5,
+                snowColor: '#ffffff',
+                updatedAt: new Date().toISOString()
+            };
+
+            // Пытаемся загрузить из Firebase
+            if (firebaseConnected && firebaseHasPermission) {
+                try {
+                    const firebaseSettings = await loadSiteSettingsFromFirebase();
+                    if (firebaseSettings) {
+                        currentSiteSettings = { ...defaultSettings, ...firebaseSettings };
+                        console.log('✅ Настройки сайта загружены из Firebase');
+                    } else {
+                        currentSiteSettings = defaultSettings;
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка загрузки настроек из Firebase:', error);
+                    currentSiteSettings = defaultSettings;
+                }
+            } else {
+                // Загружаем из localStorage если Firebase недоступен
+                const localSettings = JSON.parse(localStorage.getItem('medicalTestSiteSettings') || '{}');
+                if (Object.keys(localSettings).length > 0) {
+                    currentSiteSettings = { ...defaultSettings, ...localSettings };
+                    console.log('✅ Настройки сайта загружены из localStorage');
+                } else {
+                    currentSiteSettings = defaultSettings;
+                }
+            }
+
+            // Применяем настройки
+            applySiteSettings(currentSiteSettings);
+            
+            return currentSiteSettings;
+        }
+
+        function applySiteSettings(settings) {
+            if (!settings) return;
+            
+            // Применяем цвет фона
+            document.body.style.backgroundColor = settings.backgroundColor;
+            document.body.style.color = settings.textColor;
+            
+            // Применяем цвет текста ко всем элементам
+            applyTextColor(settings.textColor);
+            
+            // Применяем снег
+            if (settings.snowEnabled) {
+                startSnow(settings.snowIntensity, settings.snowColor);
+            } else {
+                stopSnow();
+            }
+            
+            // Обновляем форму в админ-панели если она открыта
+            updateSiteSettingsForm(settings);
+            
+            // Сохраняем в localStorage для оффлайн режима
+            localStorage.setItem('medicalTestSiteSettings', JSON.stringify(settings));
+        }
+
+        function applyTextColor(color) {
+            // Применяем цвет текста ко всем элементам кроме заголовка и кнопок
+            const allTextElements = document.querySelectorAll('body *:not(header):not(header *):not(.btn):not(.snowflake):not(input):not(textarea):not(select)');
+            allTextElements.forEach(element => {
+                // Проверяем, не является ли элемент частью заголовка
+                if (!element.closest('header')) {
+                    element.style.color = color;
+                }
+            });
+            
+            // Применяем цвет к карточкам
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                if (!card.closest('header')) {
+                    card.style.color = color;
+                }
+            });
+            
+            // Применяем цвет к footer
+            const footer = document.querySelector('footer');
+            if (footer) {
+                footer.style.color = color;
+            }
+            
+            // Применяем цвет к заголовкам
+            const headings = document.querySelectorAll('h2, h3, h4, h5, h6');
+            headings.forEach(heading => {
+                if (!heading.closest('header')) {
+                    heading.style.color = color;
+                }
+            });
+            
+            // Применяем цвет к параграфам
+            const paragraphs = document.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                if (!p.closest('header')) {
+                    p.style.color = color;
+                }
+            });
+            
+            // Применяем цвет к labels
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                if (!label.closest('header')) {
+                    label.style.color = color;
+                }
+            });
+        }
+
+        function updateSiteSettingsForm(settings) {
+            if (!settings || !backgroundColorPicker) return;
+            
+            // Заполняем поля формы
+            backgroundColorPicker.value = settings.backgroundColor;
+            backgroundColorHex.value = settings.backgroundColor;
+            backgroundColorPreview.style.backgroundColor = settings.backgroundColor;
+            currentColorSpan.textContent = settings.backgroundColor;
+            
+            textColorPicker.value = settings.textColor;
+            textColorHex.value = settings.textColor;
+            textColorPreview.style.backgroundColor = settings.textColor;
+            currentTextColorSpan.textContent = settings.textColor;
+            
+            enableSnowCheckbox.checked = settings.snowEnabled;
+            snowIntensitySlider.value = settings.snowIntensity;
+            snowIntensityValue.textContent = settings.snowIntensity;
+            snowColorPicker.value = settings.snowColor;
+            
+            // Обновляем выбранные цвета в сетке
+            updateSelectedColorInGrid(settings.backgroundColor, colorOptions, 'data-color');
+            updateSelectedColorInGrid(settings.textColor, textColorOptions, 'data-text-color');
+            
+            // Обновляем предпросмотр снега
+            if (settings.snowEnabled) {
+                createSnowPreview();
+            } else {
+                clearSnowPreview();
+            }
+        }
 
         function initModal() {
             closeModalBtn.addEventListener('click', function() {
@@ -2602,91 +2810,7 @@ service cloud.firestore {<br>
             }
         }
 
-        function loadSiteSettings() {
-            const settings = JSON.parse(localStorage.getItem('medicalTestSiteSettings') || '{}');
-            
-            if (settings.backgroundColor) {
-                document.body.style.backgroundColor = settings.backgroundColor;
-                backgroundColorPicker.value = settings.backgroundColor;
-                backgroundColorHex.value = settings.backgroundColor;
-                backgroundColorPreview.style.backgroundColor = settings.backgroundColor;
-                currentColorSpan.textContent = settings.backgroundColor;
-                updateSelectedColorInGrid(settings.backgroundColor, colorOptions, 'data-color');
-            }
-            
-            if (settings.textColor) {
-                document.body.style.color = settings.textColor;
-                textColorPicker.value = settings.textColor;
-                textColorHex.value = settings.textColor;
-                textColorPreview.style.backgroundColor = settings.textColor;
-                currentTextColorSpan.textContent = settings.textColor;
-                updateSelectedColorInGrid(settings.textColor, textColorOptions, 'data-text-color');
-                applyTextColor(settings.textColor);
-            }
-            
-            if (settings.snowEnabled) {
-                enableSnowCheckbox.checked = true;
-                if (settings.snowIntensity) {
-                    snowIntensitySlider.value = settings.snowIntensity;
-                    snowIntensityValue.textContent = settings.snowIntensity;
-                }
-                if (settings.snowColor) {
-                    snowColorPicker.value = settings.snowColor;
-                }
-                startSnow(settings.snowIntensity || 5, settings.snowColor || '#ffffff');
-            }
-        }
-
-        function applyTextColor(color) {
-            const allElements = document.querySelectorAll('body *:not(header):not(header *):not(.snowflake)');
-            allElements.forEach(element => {
-                if (!element.classList.contains('btn') && 
-                    !element.classList.contains('snowflake') &&
-                    !element.closest('header')) {
-                    element.style.color = color;
-                }
-            });
-            
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                if (!card.closest('header')) {
-                    card.style.color = color;
-                }
-            });
-            
-            const footer = document.querySelector('footer');
-            if (footer) {
-                footer.style.color = color;
-            }
-            
-            const headings = document.querySelectorAll('h2, h3, h4, h5, h6');
-            headings.forEach(heading => {
-                if (!heading.closest('header')) {
-                    heading.style.color = color;
-                }
-            });
-            
-            const paragraphs = document.querySelectorAll('p');
-            paragraphs.forEach(p => {
-                if (!p.closest('header')) {
-                    p.style.color = color;
-                }
-            });
-            
-            const labels = document.querySelectorAll('label');
-            labels.forEach(label => {
-                if (!label.closest('header')) {
-                    label.style.color = color;
-                }
-            });
-            
-            const inputs = document.querySelectorAll('input, textarea');
-            inputs.forEach(input => {
-                input.style.color = color;
-            });
-        }
-
-        function saveSiteSettings() {
+        async function saveSiteSettings() {
             const backgroundColor = backgroundColorHex.value.trim() || backgroundColorPicker.value;
             const textColor = textColorHex.value.trim() || textColorPicker.value;
             
@@ -2711,60 +2835,58 @@ service cloud.firestore {<br>
                 textColor: textColor,
                 snowEnabled: snowEnabled,
                 snowIntensity: snowIntensity,
-                snowColor: snowColor
+                snowColor: snowColor,
+                updatedAt: new Date().toISOString()
             };
             
-            localStorage.setItem('medicalTestSiteSettings', JSON.stringify(settings));
-            
-            document.body.style.backgroundColor = backgroundColor;
-            document.body.style.color = textColor;
-            applyTextColor(textColor);
-            
-            if (snowEnabled) {
-                startSnow(snowIntensity, snowColor);
-            } else {
-                stopSnow();
+            // Сохраняем в Firebase
+            if (firebaseConnected && firebaseHasPermission) {
+                try {
+                    await saveSiteSettingsToFirebase(settings);
+                    console.log('✅ Настройки сайта сохранены в Firebase');
+                } catch (error) {
+                    console.error('❌ Ошибка сохранения настроек в Firebase:', error);
+                    alert('Не удалось сохранить настройки в облаке. Они сохранены только локально.');
+                }
             }
+            
+            // Обновляем текущие настройки
+            currentSiteSettings = settings;
+            
+            // Применяем настройки
+            applySiteSettings(settings);
             
             alert('Настройки сайта сохранены');
         }
 
-        function resetSiteSettings() {
-            if (confirm('Вы уверены, что хотите сбросить настройки сайта?')) {
-                localStorage.removeItem('medicalTestSiteSettings');
-                document.body.style.backgroundColor = '#f5f7fa';
-                document.body.style.color = '#333333';
-                applyTextColor('#333333');
-                stopSnow();
+        async function resetSiteSettings() {
+            if (confirm('Вы уверены, что хотите сбросить настройки сайта к значениям по умолчанию?')) {
+                const defaultSettings = {
+                    backgroundColor: '#f5f7fa',
+                    textColor: '#333333',
+                    snowEnabled: false,
+                    snowIntensity: 5,
+                    snowColor: '#ffffff',
+                    updatedAt: new Date().toISOString()
+                };
                 
-                colorOptions.forEach(option => {
-                    option.classList.remove('selected');
-                    if (option.getAttribute('data-color') === '#f5f7fa') {
-                        option.classList.add('selected');
-                        currentColorSpan.textContent = '#f5f7fa';
+                // Сбрасываем в Firebase
+                if (firebaseConnected && firebaseHasPermission) {
+                    try {
+                        await saveSiteSettingsToFirebase(defaultSettings);
+                        console.log('✅ Настройки сайта сброшены в Firebase');
+                    } catch (error) {
+                        console.error('❌ Ошибка сброса настроек в Firebase:', error);
                     }
-                });
+                }
                 
-                textColorOptions.forEach(option => {
-                    option.classList.remove('selected');
-                    if (option.getAttribute('data-text-color') === '#333333') {
-                        option.classList.add('selected');
-                        currentTextColorSpan.textContent = '#333333';
-                    }
-                });
+                // Обновляем текущие настройки
+                currentSiteSettings = defaultSettings;
                 
-                backgroundColorPicker.value = '#f5f7fa';
-                backgroundColorHex.value = '#f5f7fa';
-                backgroundColorPreview.style.backgroundColor = '#f5f7fa';
-                textColorPicker.value = '#333333';
-                textColorHex.value = '#333333';
-                textColorPreview.style.backgroundColor = '#333333';
-                enableSnowCheckbox.checked = false;
-                snowIntensitySlider.value = 5;
-                snowIntensityValue.textContent = '5';
-                snowColorPicker.value = '#ffffff';
+                // Применяем настройки
+                applySiteSettings(defaultSettings);
                 
-                alert('Настройки сайта сброшены');
+                alert('Настройки сайта сброшены к значениям по умолчанию');
             }
         }
 
@@ -2947,6 +3069,9 @@ service cloud.firestore {<br>
                         loadAssignmentsList();
                     } else if (tabId === 'user-answers') {
                         loadUserAnswersList();
+                    } else if (tabId === 'site-settings') {
+                        // Обновляем форму настроек сайта
+                        updateSiteSettingsForm(currentSiteSettings);
                     }
                 });
             });
