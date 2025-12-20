@@ -542,6 +542,21 @@
             color: white;
         }
         
+        .role-junior-sergeant {
+            background-color: #0b8f00;
+            color: white;
+        }
+        
+        .role-sergeant {
+            background-color: #8b8f00;
+            color: white;
+        }
+        
+        .role-junior-officer {
+            background-color: #1a73e8;
+            color: white;
+        }
+        
         .user-stats {
             font-size: 14px;
             color: #5f6368;
@@ -671,8 +686,8 @@
             margin-left: 8px;
         }
         
-        .unit-st {
-            background-color: #6c757d;
+        .unit-medical-corps {
+            background-color: #ff0000;
             color: white;
         }
         
@@ -698,6 +713,11 @@
         
         .unit-crimea {
             background-color: #7e22ce;
+            color: white;
+        }
+        
+        .unit-attached {
+            background-color: #4f46e5;
             color: white;
         }
         
@@ -1273,7 +1293,7 @@
             <p>Для работы с Firebase необходимо настроить правила безопасности:</p>
             <ol>
                 <li>Перейдите в <a href="https://console.firebase.google.com/" target="_blank">консоль Firebase</a></li>
-                <li>Выберите проект "korpuss-51mk"</li>
+                <li>Выберите проект "medical-test-system"</li>
                 <li>В меню слева выберите "Firestore Database"</li>
                 <li>Перейдите на вкладку "Rules"</li>
                 <li>Замените правила на следующие:</li>
@@ -1439,9 +1459,12 @@ service cloud.firestore {<br>
                             <div class="form-group">
                                 <label for="edit-user-role-curator">Роль</label>
                                 <select id="edit-user-role-curator">
-                                    <option value="doctor">Полевой Врач</option>
-                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="junior-sergeant">Младший Сержантский Состав</option>
+                                    <option value="sergeant">Сержантский Состав</option>
+                                    <option value="junior-officer">Младший Офицерский Состав</option>
                                     <option value="sanitary">Полевой Санитар</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="doctor">Полевой Врач</option>
                                 </select>
                             </div>
                             
@@ -1449,7 +1472,7 @@ service cloud.firestore {<br>
                                 <label for="edit-user-unit-curator">Подразделение</label>
                                 <select id="edit-user-unit-curator">
                                     <option value="none">Нету</option>
-                                    <option value="st">СТ</option>
+                                    <option value="medical-corps">Медицинский Корпус</option>
                                     <option value="212">212</option>
                                     <option value="501">501</option>
                                     <option value="41">41</option>
@@ -1480,7 +1503,7 @@ service cloud.firestore {<br>
                                 <select id="filter-unit-curator">
                                     <option value="">Все подразделения</option>
                                     <option value="none">Нету</option>
-                                    <option value="st">СТ</option>
+                                    <option value="medical-corps">Медицинский Корпус</option>
                                     <option value="212">212</option>
                                     <option value="501">501</option>
                                     <option value="41">41</option>
@@ -1493,9 +1516,12 @@ service cloud.firestore {<br>
                                 <label for="filter-role-curator">Фильтр по роли</label>
                                 <select id="filter-role-curator">
                                     <option value="">Все роли</option>
-                                    <option value="doctor">Полевой Врач</option>
-                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="junior-sergeant">Младший Сержантский Состав</option>
+                                    <option value="sergeant">Сержантский Состав</option>
+                                    <option value="junior-officer">Младший Офицерский Состав</option>
                                     <option value="sanitary">Полевой Санитар</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="doctor">Полевой Врач</option>
                                 </select>
                             </div>
                         </div>
@@ -1536,7 +1562,7 @@ service cloud.firestore {<br>
                                 <select id="filter-answers-unit-curator">
                                     <option value="">Все подразделения</option>
                                     <option value="none">Нету</option>
-                                    <option value="st">СТ</option>
+                                    <option value="medical-corps">Медицинский Корпус</option>
                                     <option value="212">212</option>
                                     <option value="501">501</option>
                                     <option value="41">41</option>
@@ -1549,9 +1575,12 @@ service cloud.firestore {<br>
                                 <label for="filter-answers-role-curator">Фильтр по роли</label>
                                 <select id="filter-answers-role-curator">
                                     <option value="">Все роли</option>
-                                    <option value="doctor">Полевой Врач</option>
-                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="junior-sergeant">Младший Сержантский Состав</option>
+                                    <option value="sergeant">Сержантский Состав</option>
+                                    <option value="junior-officer">Младший Офицерский Состав</option>
                                     <option value="sanitary">Полевой Санитар</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="doctor">Полевой Врач</option>
                                 </select>
                             </div>
                             
@@ -1649,9 +1678,12 @@ service cloud.firestore {<br>
                             <div class="form-group">
                                 <label for="edit-user-role">Роль</label>
                                 <select id="edit-user-role">
-                                    <option value="doctor">Полевой Врач</option>
-                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="junior-sergeant">Младший Сержантский Состав</option>
+                                    <option value="sergeant">Сержантский Состав</option>
+                                    <option value="junior-officer">Младший Офицерский Состав</option>
                                     <option value="sanitary">Полевой Санитар</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="doctor">Полевой Врач</option>
                                     <option value="curator">Куратор</option>
                                     <option value="admin">Администратор</option>
                                 </select>
@@ -1661,7 +1693,7 @@ service cloud.firestore {<br>
                                 <label for="edit-user-unit">Подразделение</label>
                                 <select id="edit-user-unit">
                                     <option value="none">Нету</option>
-                                    <option value="st">СТ</option>
+                                    <option value="medical-corps">Медицинский Корпус</option>
                                     <option value="212">212</option>
                                     <option value="501">501</option>
                                     <option value="41">41</option>
@@ -1755,7 +1787,7 @@ service cloud.firestore {<br>
                                 <select id="filter-unit">
                                     <option value="">Все подразделения</option>
                                     <option value="none">Нету</option>
-                                    <option value="st">СТ</option>
+                                    <option value="medical-corps">Медицинский Корпус</option>
                                     <option value="212">212</option>
                                     <option value="501">501</option>
                                     <option value="41">41</option>
@@ -1768,9 +1800,12 @@ service cloud.firestore {<br>
                                 <label for="filter-role">Фильтр по роли</label>
                                 <select id="filter-role">
                                     <option value="">Все роли</option>
-                                    <option value="doctor">Полевой Врач</option>
-                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="junior-sergeant">Младший Сержантский Состав</option>
+                                    <option value="sergeant">Сержантский Состав</option>
+                                    <option value="junior-officer">Младший Офицерский Состав</option>
                                     <option value="sanitary">Полевой Санитар</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="doctor">Полевой Врач</option>
                                     <option value="curator">Куратор</option>
                                     <option value="admin">Администратор</option>
                                 </select>
@@ -1822,7 +1857,7 @@ service cloud.firestore {<br>
                                 <select id="filter-answers-unit">
                                     <option value="">Все подразделения</option>
                                     <option value="none">Нету</option>
-                                    <option value="st">СТ</option>
+                                    <option value="medical-corps">Медицинский Корпус</option>
                                     <option value="212">212</option>
                                     <option value="501">501</option>
                                     <option value="41">41</option>
@@ -1835,9 +1870,12 @@ service cloud.firestore {<br>
                                 <label for="filter-answers-role">Фильтр по роли</label>
                                 <select id="filter-answers-role">
                                     <option value="">Все роли</option>
-                                    <option value="doctor">Полевой Врач</option>
-                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="junior-sergeant">Младший Сержантский Состав</option>
+                                    <option value="sergeant">Сержантский Состав</option>
+                                    <option value="junior-officer">Младший Офицерский Состав</option>
                                     <option value="sanitary">Полевой Санитар</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="doctor">Полевой Врач</option>
                                     <option value="curator">Куратор</option>
                                     <option value="admin">Администратор</option>
                                 </select>
@@ -1999,30 +2037,65 @@ service cloud.firestore {<br>
         let firebaseConnected = false;
         let firebaseHasPermission = false;
 
-        try {
-            if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
+        // Функция для обновления статуса Firebase
+        function updateFirebaseStatus(status) {
+            const statusElement = document.getElementById('firebase-status');
+            
+            if (status === 'connected') {
+                statusElement.textContent = 'Firebase: Подключено ✓';
+                statusElement.className = 'firebase-status firebase-connected';
+                statusElement.classList.remove('hidden');
+            } else if (status === 'no-permission') {
+                statusElement.textContent = 'Firebase: Нет прав доступа ⚠️';
+                statusElement.className = 'firebase-status firebase-no-permission';
+                statusElement.classList.remove('hidden');
+            } else {
+                statusElement.textContent = 'Firebase: Не подключено (локальный режим)';
+                statusElement.className = 'firebase-status firebase-disconnected';
+                statusElement.classList.remove('hidden');
+            }
+        }
+
+        // Инициализация Firebase с улучшенной обработкой ошибок
+        function initializeFirebase() {
+            try {
+                if (typeof firebase === 'undefined' || !firebaseConfig.apiKey) {
+                    console.log("⚠️ Firebase не настроен, используется localStorage");
+                    updateFirebaseStatus('disconnected');
+                    return false;
+                }
+                
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore();
                 auth = firebase.auth();
                 firebaseConnected = true;
-                console.log("✅ Firebase подключен");
+                console.log("✅ Firebase инициализирован");
                 
-                // Проверяем доступность Firestore
-                testFirebaseConnection();
-            } else {
-                console.log("⚠️ Firebase не настроен, используется localStorage");
+                return true;
+            } catch (error) {
+                console.error("❌ Ошибка инициализации Firebase:", error);
                 updateFirebaseStatus('disconnected');
+                return false;
             }
-        } catch (error) {
-            console.error("❌ Ошибка Firebase:", error);
-            updateFirebaseStatus('disconnected');
         }
 
-        // Тестирование подключения к Firebase
+        // Тестирование подключения к Firebase с улучшенной обработкой ошибок
         async function testFirebaseConnection() {
+            if (!firebaseConnected) {
+                updateFirebaseStatus('disconnected');
+                return false;
+            }
+            
             try {
+                // Устанавливаем таймаут для запроса
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Таймаут подключения')), 5000);
+                });
+                
                 // Пробуем выполнить простой запрос для проверки прав
-                const testQuery = await db.collection('users').limit(1).get();
+                const testQueryPromise = db.collection('users').limit(1).get();
+                const testQuery = await Promise.race([testQueryPromise, timeoutPromise]);
+                
                 firebaseHasPermission = true;
                 console.log("✅ Firebase права доступа подтверждены");
                 updateFirebaseStatus('connected');
@@ -2030,18 +2103,24 @@ service cloud.firestore {<br>
                 // Создаем администратора по умолчанию
                 await createDefaultAdmin();
                 await createDefaultCurator();
-                // Загружаем настройки сайта
-                await loadSiteSettings();
+                
+                return true;
             } catch (error) {
-                if (error.code === 'permission-denied') {
+                console.error("❌ Ошибка проверки подключения Firebase:", error);
+                
+                if (error.code === 'permission-denied' || error.message?.includes('permission')) {
                     console.warn("⚠️ Firebase: недостаточно прав доступа");
                     firebaseHasPermission = false;
                     updateFirebaseStatus('no-permission');
                     showFirebaseHelp();
+                } else if (error.message === 'Таймаут подключения') {
+                    console.warn("⚠️ Firebase: таймаут подключения");
+                    updateFirebaseStatus('disconnected');
                 } else {
-                    console.error("❌ Ошибка проверки подключения Firebase:", error);
                     updateFirebaseStatus('disconnected');
                 }
+                
+                return false;
             }
         }
 
@@ -2095,24 +2174,6 @@ service cloud.firestore {<br>
             }
         }
 
-        function updateFirebaseStatus(status) {
-            const statusElement = document.getElementById('firebase-status');
-            
-            if (status === 'connected') {
-                statusElement.textContent = 'Firebase: Подключено ✓';
-                statusElement.className = 'firebase-status firebase-connected';
-                statusElement.classList.remove('hidden');
-            } else if (status === 'no-permission') {
-                statusElement.textContent = 'Firebase: Нет прав доступа ⚠️';
-                statusElement.className = 'firebase-status firebase-no-permission';
-                statusElement.classList.remove('hidden');
-            } else {
-                statusElement.textContent = 'Firebase: Не подключено (локальный режим)';
-                statusElement.className = 'firebase-status firebase-disconnected';
-                statusElement.classList.remove('hidden');
-            }
-        }
-
         function showFirebaseHelp() {
             const helpElement = document.getElementById('firebase-config-help');
             if (helpElement) {
@@ -2139,24 +2200,8 @@ service cloud.firestore {<br>
                     return doc.data();
                 }
                 
-                // Если настроек нет, создаем настройки по умолчанию
-                const defaultSettings = {
-                    backgroundColor: '#f5f7fa',
-                    textColor: '#333333',
-                    snowEnabled: false,
-                    snowIntensity: 5,
-                    snowColor: '#ffffff',
-                    updatedAt: new Date().toISOString()
-                };
-                
-                await db.collection('siteSettings').doc('global').set(defaultSettings);
-                return defaultSettings;
+                return null;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка загрузки настроек сайта:', error);
                 return null;
             }
@@ -2176,11 +2221,6 @@ service cloud.firestore {<br>
                 await db.collection('siteSettings').doc('global').set(settingsWithTimestamp);
                 return settingsWithTimestamp;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка сохранения настроек сайта:', error);
                 return null;
             }
@@ -2210,11 +2250,6 @@ service cloud.firestore {<br>
                 
                 return users;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка загрузки пользователей:', error);
                 return getLocalUsers();
             }
@@ -2241,11 +2276,6 @@ service cloud.firestore {<br>
                 saveUserToLocal(savedUser);
                 return savedUser;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка сохранения пользователя:', error);
                 return saveUserToLocal(user);
             }
@@ -2282,11 +2312,6 @@ service cloud.firestore {<br>
                 localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
                 
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка удаления пользователя:', error);
                 
                 // Все равно удаляем из localStorage
@@ -2323,11 +2348,6 @@ service cloud.firestore {<br>
                 
                 return questionSets;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка загрузки наборов вопросов:', error);
                 return getLocalQuestionSets();
             }
@@ -2354,11 +2374,6 @@ service cloud.firestore {<br>
                 saveQuestionSetToLocal(savedSet);
                 return savedSet;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка сохранения набора вопросов:', error);
                 return saveQuestionSetToLocal(questionSet);
             }
@@ -2381,11 +2396,6 @@ service cloud.firestore {<br>
                 localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
                 
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка удаления набора вопросов:', error);
                 
                 // Все равно удаляем из localStorage
@@ -2418,11 +2428,6 @@ service cloud.firestore {<br>
                 
                 return assignments;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка загрузки назначений:', error);
                 return getLocalAssignments();
             }
@@ -2449,11 +2454,6 @@ service cloud.firestore {<br>
                 saveAssignmentToLocal(savedAssignment);
                 return savedAssignment;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка сохранения назначения:', error);
                 return saveAssignmentToLocal(assignment);
             }
@@ -2476,11 +2476,6 @@ service cloud.firestore {<br>
                 localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
                 
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка удаления назначения:', error);
                 
                 // Все равно удаляем из localStorage
@@ -2513,11 +2508,6 @@ service cloud.firestore {<br>
                 
                 return userAnswers;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка загрузки ответов пользователей:', error);
                 return getLocalUserAnswers();
             }
@@ -2536,11 +2526,6 @@ service cloud.firestore {<br>
                 saveUserAnswerToLocal(userAnswer);
                 return userAnswer;
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка сохранения ответа пользователя:', error);
                 return saveUserAnswerToLocal(userAnswer);
             }
@@ -2563,11 +2548,6 @@ service cloud.firestore {<br>
                 localStorage.setItem('medicalTestUserAnswers', JSON.stringify(updatedUserAnswers));
                 
             } catch (error) {
-                if (error.code === 'permission-denied') {
-                    firebaseHasPermission = false;
-                    updateFirebaseStatus('no-permission');
-                    showFirebaseHelp();
-                }
                 console.error('❌ Ошибка удаления ответа пользователя:', error);
                 
                 // Все равно удаляем из localStorage
@@ -2714,7 +2694,7 @@ service cloud.firestore {<br>
         function getUnitDisplayName(unit) {
             const unitNames = {
                 'none': 'Нету',
-                'st': 'СТ',
+                'medical-corps': 'Медицинский Корпус',
                 '212': '212',
                 '501': '501',
                 '41': '41',
@@ -2728,7 +2708,7 @@ service cloud.firestore {<br>
         function getUnitClass(unit) {
             const unitClasses = {
                 'none': 'unit-none',
-                'st': 'unit-st',
+                'medical-corps': 'unit-medical-corps',
                 '212': 'unit-212',
                 '501': 'unit-501',
                 '41': 'unit-41',
@@ -2742,9 +2722,12 @@ service cloud.firestore {<br>
         // Функция для получения отображаемого названия роли
         function getRoleDisplayName(role) {
             const roleNames = {
-                'doctor': 'Полевой Врач',
-                'medic': 'Полевой Фельдшер',
+                'junior-sergeant': 'Младший Сержантский Состав',
+                'sergeant': 'Сержантский Состав',
+                'junior-officer': 'Младший Офицерский Состав',
                 'sanitary': 'Полевой Санитар',
+                'medic': 'Полевой Фельдшер',
+                'doctor': 'Полевой Врач',
                 'curator': 'Куратор',
                 'admin': 'Администратор'
             };
@@ -2849,7 +2832,15 @@ service cloud.firestore {<br>
         const textColorGrid = document.getElementById('text-color-grid');
 
         // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Инициализируем Firebase
+            const firebaseInitialized = initializeFirebase();
+            
+            if (firebaseInitialized) {
+                // Тестируем подключение к Firebase
+                await testFirebaseConnection();
+            }
+            
             showLoginSection();
             loadSiteSettings();
             initEventListeners();
@@ -2905,34 +2896,10 @@ service cloud.firestore {<br>
             
             // Применяем цвет фона
             document.body.style.backgroundColor = settings.backgroundColor;
-            document.body.style.color = settings.textColor;
             
-            // Применяем цвет текста ко всем элементам
-            applyTextColor(settings.textColor);
-            
-            // Применяем снег
-            if (settings.snowEnabled) {
-                startSnow(settings.snowIntensity, settings.snowColor);
-            } else {
-                stopSnow();
-            }
-            
-            // Обновляем форму в админ-панели если она открыта
-            updateSiteSettingsForm(settings);
-            
-            // Сохраняем в localStorage для оффлайн режима
-            localStorage.setItem('medicalTestSiteSettings', JSON.stringify(settings));
-        }
-
-        function applyTextColor(color) {
-            // Применяем цвет текста ко всем элементам кроме заголовка и кнопок
-            const allTextElements = document.querySelectorAll('body *:not(header):not(header *):not(.btn):not(.snowflake):not(input):not(textarea):not(select)');
-            allTextElements.forEach(element => {
-                // Проверяем, не является ли элемент частью заголовка
-                if (!element.closest('header')) {
-                    element.style.color = color;
-                }
-            });
+            // Применяем цвет текста
+            const color = settings.textColor;
+            document.body.style.color = color;
             
             // Применяем цвет к карточкам
             const cards = document.querySelectorAll('.card');
@@ -2971,6 +2938,13 @@ service cloud.firestore {<br>
                     label.style.color = color;
                 }
             });
+            
+            // Применяем снег, если включен
+            if (settings.snowEnabled) {
+                startSnow(settings.snowIntensity, settings.snowColor);
+            } else {
+                stopSnow();
+            }
         }
 
         function updateSiteSettingsForm(settings) {
@@ -3179,6 +3153,9 @@ service cloud.firestore {<br>
                 }
             }
             
+            // Сохраняем в localStorage
+            localStorage.setItem('medicalTestSiteSettings', JSON.stringify(settings));
+            
             // Обновляем текущие настройки
             currentSiteSettings = settings;
             
@@ -3208,6 +3185,9 @@ service cloud.firestore {<br>
                         console.error('❌ Ошибка сброса настроек в Firebase:', error);
                     }
                 }
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('medicalTestSiteSettings', JSON.stringify(defaultSettings));
                 
                 // Обновляем текущие настройки
                 currentSiteSettings = defaultSettings;
@@ -4218,11 +4198,14 @@ service cloud.firestore {<br>
                 const usersList = document.getElementById('users-list-curator');
                 usersList.innerHTML = '';
                 
-                // Фильтруем только пользователей с ролями врач, фельдшер, санитар
+                // Фильтруем только пользователей с ролями врач, фельдшер, санитар и новыми ролями
                 const regularUsers = users.filter(user => 
-                    user.role === 'doctor' || 
-                    user.role === 'medic' || 
-                    user.role === 'sanitary'
+                    user.role === 'junior-sergeant' || 
+                    user.role === 'sergeant' || 
+                    user.role === 'junior-officer' ||
+                    user.role === 'sanitary' ||
+                    user.role === 'medic' ||
+                    user.role === 'doctor'
                 );
                 
                 if (regularUsers.length === 0) {
@@ -4324,7 +4307,7 @@ service cloud.firestore {<br>
                 const newUser = {
                     login: login,
                     password: password,
-                    role: 'doctor',
+                    role: 'junior-sergeant',
                     unit: 'none',
                     createdAt: new Date().toISOString()
                 };
@@ -4372,7 +4355,7 @@ service cloud.firestore {<br>
                 const newUser = {
                     login: login,
                     password: password,
-                    role: 'doctor',
+                    role: 'junior-sergeant',
                     unit: 'none',
                     createdAt: new Date().toISOString()
                 };
@@ -4431,7 +4414,7 @@ service cloud.firestore {<br>
                     return;
                 }
                 
-                // Куратор может редактировать только врачей, фельдшеров, санитаров
+                // Куратор может редактировать только пользователей с обычными ролями
                 if (user.role === 'admin' || user.role === 'curator') {
                     alert('Куратор не может редактировать администраторов и других кураторов');
                     return;
@@ -4527,7 +4510,7 @@ service cloud.firestore {<br>
                     return;
                 }
                 
-                // Куратор может сохранять только врачей, фельдшеров, санитаров
+                // Куратор может сохранять только обычных пользователей
                 if (role === 'admin' || role === 'curator') {
                     alert('Куратор не может создавать администраторов и других кураторов');
                     return;
@@ -4582,11 +4565,14 @@ service cloud.firestore {<br>
             userSelect.innerHTML = '<option value="">-- Выберите пользователя --</option>';
             
             loadUsers().then(users => {
-                // Куратор может назначать тесты только врачам, фельдшерам, санитарам
+                // Куратор может назначать тесты только обычным пользователям
                 const regularUsers = users.filter(user => 
-                    user.role === 'doctor' || 
-                    user.role === 'medic' || 
-                    user.role === 'sanitary'
+                    user.role === 'junior-sergeant' || 
+                    user.role === 'sergeant' || 
+                    user.role === 'junior-officer' ||
+                    user.role === 'sanitary' ||
+                    user.role === 'medic' ||
+                    user.role === 'doctor'
                 );
                 
                 regularUsers.forEach(user => {
@@ -5195,11 +5181,12 @@ service cloud.firestore {<br>
                     });
                 }
                 
-                // Куратор видит только назначения для врачей, фельдшеров, санитаров
+                // Куратор видит только назначения для обычных пользователей
                 const users = await loadUsers();
                 filteredAssignments = filteredAssignments.filter(assignment => {
                     const user = users.find(u => u.id === assignment.userId);
-                    return user && (user.role === 'doctor' || user.role === 'medic' || user.role === 'sanitary');
+                    return user && (user.role === 'junior-sergeant' || user.role === 'sergeant' || user.role === 'junior-officer' ||
+                            user.role === 'sanitary' || user.role === 'medic' || user.role === 'doctor');
                 });
                 
                 if (filteredAssignments.length === 0) {
@@ -5442,11 +5429,14 @@ service cloud.firestore {<br>
                     filteredAnswers = filteredAnswers.filter(answer => answer.questionSetId === filterTest);
                 }
                 
-                // Куратор видит только ответы врачей, фельдшеров, санитаров
+                // Куратор видит только ответы обычных пользователей
                 filteredAnswers = filteredAnswers.filter(answer => 
-                    answer.userRole === 'doctor' || 
-                    answer.userRole === 'medic' || 
-                    answer.userRole === 'sanitary'
+                    answer.userRole === 'junior-sergeant' || 
+                    answer.userRole === 'sergeant' || 
+                    answer.userRole === 'junior-officer' ||
+                    answer.userRole === 'sanitary' ||
+                    answer.userRole === 'medic' ||
+                    answer.userRole === 'doctor'
                 );
                 
                 if (filteredAnswers.length === 0) {
