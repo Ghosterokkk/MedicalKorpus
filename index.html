@@ -771,12 +771,35 @@
             background-color: #e6f4ea;
         }
         
+        .test-option.unchecked {
+            border-color: #f9ab00;
+            background-color: #fff8e1;
+        }
+        
+        .test-option.unchecked:hover {
+            border-color: #f9ab00;
+            background-color: #fff8e1;
+            cursor: default;
+        }
+        
         .completed-badge {
             position: absolute;
             top: 10px;
             right: 10px;
             background-color: #0b8043;
             color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .unchecked-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #f9ab00;
+            color: black;
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 12px;
@@ -790,6 +813,10 @@
         
         .test-option.completed h3 {
             color: #0b8043;
+        }
+        
+        .test-option.unchecked h3 {
+            color: #f9ab00;
         }
         
         .test-info {
@@ -867,7 +894,6 @@
             border-left: 4px solid #f9ab00;
         }
         
-        /* Модальное окно для редактирования вопроса */
         .modal {
             display: none;
             position: fixed;
@@ -928,7 +954,6 @@
             width: 120px;
         }
         
-        /* Стили для снега */
         .snowflake {
             position: fixed;
             top: -10px;
@@ -945,7 +970,6 @@
             content: '❄';
         }
         
-        /* Настройки цветов фона */
         .color-option {
             display: inline-block;
             width: 30px;
@@ -1162,14 +1186,12 @@
             font-family: monospace;
         }
         
-        /* Стили для отображения текста с сохранением форматирования */
         .preserve-formatting {
             white-space: pre-line;
             word-wrap: break-word;
             line-height: 1.5;
         }
         
-        /* Стили для настроек сайта */
         .site-settings-group {
             margin-bottom: 20px;
             padding: 15px;
@@ -1218,7 +1240,6 @@
             margin-bottom: 10px;
         }
         
-        /* Стили для блоков недоступных функций */
         .disabled-feature {
             opacity: 0.5;
             pointer-events: none;
@@ -1244,7 +1265,6 @@
             display: block;
         }
         
-        /* Стили для вопросов с самостоятельным ответом */
         .free-answer-textarea {
             width: 100%;
             min-height: 120px;
@@ -1318,15 +1338,31 @@
             background-color: #d93025;
             color: white;
         }
+        
+        .verification-notes {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #1a73e8;
+        }
+        
+        .verification-notes textarea {
+            width: 100%;
+            min-height: 60px;
+            margin-top: 5px;
+        }
+        
+        .answered-questions {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <!-- Снежинки будут добавляться сюда -->
     <div id="snow-container"></div>
     
     <div class="firebase-status hidden" id="firebase-status"></div>
     
-    <!-- Модальное окно для редактирования вопроса -->
     <div id="question-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1353,7 +1389,6 @@
                 </div>
             </div>
             
-            <!-- Блок для вариантов ответов (отображается только для типа "choice") -->
             <div class="form-group" id="choice-options-section">
                 <label>Варианты ответов</label>
                 <div id="modal-options-container">
@@ -1361,7 +1396,6 @@
                 <button class="btn btn-secondary" id="modal-add-option">Добавить вариант</button>
             </div>
             
-            <!-- Блок для правильного ответа для типа "choice" -->
             <div class="form-group" id="choice-correct-answer-section">
                 <label for="modal-correct-answer">Правильный ответ</label>
                 <select id="modal-correct-answer">
@@ -1369,7 +1403,6 @@
                 </select>
             </div>
             
-            <!-- Блок для эталонного ответа для типа "text" -->
             <div class="form-group hidden" id="text-correct-answer-section">
                 <label for="modal-correct-answer-text">Эталонный ответ (для проверки)</label>
                 <textarea id="modal-correct-answer-text" class="correct-answer-textarea" placeholder="Введите эталонный ответ для проверки самостоятельных ответов"></textarea>
@@ -1397,7 +1430,6 @@
             </div>
         </header>
         
-        <!-- Инструкция по настройке Firebase -->
         <div class="firebase-config-card" id="firebase-config-help" style="display: none;">
             <h3>⚠️ Настройка правил Firebase</h3>
             <p>Для работы с Firebase необходимо настроить правила безопасности:</p>
@@ -1424,7 +1456,6 @@ service cloud.firestore {<br>
             <button class="btn btn-warning" id="hide-firebase-help">Скрыть инструкцию</button>
         </div>
         
-        <!-- Панель пользователя -->
         <div id="user-panel">
             <div class="card" id="login-section">
                 <h2>Вход в систему</h2>
@@ -1471,6 +1502,7 @@ service cloud.firestore {<br>
                 </div>
                 
                 <div class="question-navigation">
+                    <button class="btn" id="prev-question" style="display: none;">Предыдущий вопрос</button>
                     <button class="btn" id="next-question">Следующий вопрос</button>
                 </div>
                 
@@ -1497,7 +1529,6 @@ service cloud.firestore {<br>
             </div>
         </div>
         
-        <!-- Панель куратора -->
         <div class="curator-panel" id="curator-panel">
             <div class="card hidden" style="margin-bottom: 20px;" id="back-to-user-container-curator">
                 <button class="btn btn-secondary btn-block" id="back-to-user-login-curator">← Вернуться к входу пользователей</button>
@@ -1528,6 +1559,7 @@ service cloud.firestore {<br>
                     <div class="tab" data-tab="curator-assignments">Назначение тестов</div>
                     <div class="tab" data-tab="curator-user-answers">Результаты ответов пользователей</div>
                     <div class="tab" data-tab="curator-verification">Проверка ответов</div>
+                    <div class="tab" data-tab="curator-reports">Отчеты</div>
                 </div>
                 
                 <div class="tab-content active" id="curator-users-tab">
@@ -1763,6 +1795,63 @@ service cloud.firestore {<br>
                     </div>
                 </div>
                 
+                <div class="tab-content" id="curator-reports-tab">
+                    <div class="card">
+                        <h2>Отчеты</h2>
+                        <p>Просмотр статистики и отчетов по тестированию.</p>
+                        
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label for="report-unit">Подразделение</label>
+                                <select id="report-unit">
+                                    <option value="">Все подразделения</option>
+                                    <option value="none">Нету</option>
+                                    <option value="medical-corps">Медицинский Корпус</option>
+                                    <option value="212">212</option>
+                                    <option value="501">501</option>
+                                    <option value="41">41</option>
+                                    <option value="cg">CG</option>
+                                    <option value="attached">Прикомандированный</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="report-role">Роль</label>
+                                <select id="report-role">
+                                    <option value="">Все роли</option>
+                                    <option value="junior-sergeant">Младший Сержантский Состав</option>
+                                    <option value="sergeant">Сержантский Состав</option>
+                                    <option value="junior-officer">Младший Офицерский Состав</option>
+                                    <option value="sanitary">Полевой Санитар</option>
+                                    <option value="medic">Полевой Фельдшер</option>
+                                    <option value="doctor">Полевой Врач</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="report-test">Тест</label>
+                                <select id="report-test">
+                                    <option value="">Все тесты</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="report-period">Период</label>
+                                <select id="report-period">
+                                    <option value="all">Все время</option>
+                                    <option value="month">Последний месяц</option>
+                                    <option value="week">Последняя неделя</option>
+                                    <option value="day">Сегодня</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-success" id="generate-report">Сформировать отчет</button>
+                        
+                        <div id="report-results" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+                
                 <div class="card">
                     <button class="btn btn-secondary btn-block" id="user-mode-curator">Вернуться в режим пользователя</button>
                     <button class="btn btn-danger btn-block" id="curator-logout" style="margin-top: 10px;">Выйти из панели куратора</button>
@@ -1770,7 +1859,6 @@ service cloud.firestore {<br>
             </div>
         </div>
         
-        <!-- Админ-панель -->
         <div class="admin-panel" id="admin-panel">
             <div class="card hidden" style="margin-bottom: 20px;" id="back-to-user-container">
                 <button class="btn btn-secondary btn-block" id="back-to-user-login">← Вернуться к входу пользователей</button>
@@ -2230,13 +2318,11 @@ service cloud.firestore {<br>
         </footer>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
     <script>
-        // 🔥 КОНФИГУРАЦИЯ FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDsuDoY6iFMvM50bx0H1qjX4PrQQk9J1LQ",
             authDomain: "medical-test-system.firebaseapp.com",
@@ -2246,13 +2332,11 @@ service cloud.firestore {<br>
             appId: "1:1094134355386:web:5995c344a6ef01049fb983"
         };
 
-        // Инициализация Firebase
         let db;
         let auth;
         let firebaseConnected = false;
         let firebaseHasPermission = false;
 
-        // Функция для обновления статуса Firebase
         function updateFirebaseStatus(status) {
             const statusElement = document.getElementById('firebase-status');
             
@@ -2271,7 +2355,6 @@ service cloud.firestore {<br>
             }
         }
 
-        // Инициализация Firebase с улучшенной обработкой ошибок
         function initializeFirebase() {
             try {
                 if (typeof firebase === 'undefined' || !firebaseConfig.apiKey) {
@@ -2294,7 +2377,6 @@ service cloud.firestore {<br>
             }
         }
 
-        // Тестирование подключения к Firebase с улучшенной обработкой ошибок
         async function testFirebaseConnection() {
             if (!firebaseConnected) {
                 updateFirebaseStatus('disconnected');
@@ -2302,12 +2384,10 @@ service cloud.firestore {<br>
             }
             
             try {
-                // Устанавливаем таймаут для запроса
                 const timeoutPromise = new Promise((_, reject) => {
                     setTimeout(() => reject(new Error('Таймаут подключения')), 5000);
                 });
                 
-                // Пробуем выполнить простой запрос для проверки прав
                 const testQueryPromise = db.collection('users').limit(1).get();
                 const testQuery = await Promise.race([testQueryPromise, timeoutPromise]);
                 
@@ -2315,7 +2395,6 @@ service cloud.firestore {<br>
                 console.log("✅ Firebase права доступа подтверждены");
                 updateFirebaseStatus('connected');
                 
-                // Создаем администратора по умолчанию
                 await createDefaultAdmin();
                 await createDefaultCurator();
                 
@@ -2339,7 +2418,6 @@ service cloud.firestore {<br>
             }
         }
 
-        // Функция для создания администратора по умолчанию
         async function createDefaultAdmin() {
             if (!firebaseConnected || !firebaseHasPermission) return;
             
@@ -2364,7 +2442,6 @@ service cloud.firestore {<br>
             }
         }
 
-        // Функция для создания куратора по умолчанию
         async function createDefaultCurator() {
             if (!firebaseConnected || !firebaseHasPermission) return;
             
@@ -2403,7 +2480,6 @@ service cloud.firestore {<br>
             }
         }
 
-        // Firebase функции для настроек сайта
         async function loadSiteSettingsFromFirebase() {
             try {
                 if (!firebaseConnected || !firebaseHasPermission) {
@@ -2441,7 +2517,6 @@ service cloud.firestore {<br>
             }
         }
 
-        // Firebase функции
         async function loadUsers() {
             try {
                 if (!firebaseConnected || !firebaseHasPermission) {
@@ -2458,7 +2533,6 @@ service cloud.firestore {<br>
                     });
                 });
                 
-                // Сохраняем в localStorage для оффлайн режима
                 if (users.length > 0) {
                     localStorage.setItem('medicalTestUsers', JSON.stringify(users));
                 }
@@ -2478,16 +2552,13 @@ service cloud.firestore {<br>
 
                 let savedUser = { ...user };
                 
-                // Если у пользователя нет ID, создаем нового
                 if (!user.id) {
                     const docRef = await db.collection('users').add(user);
                     savedUser.id = docRef.id;
                 } else {
-                    // Если ID есть, обновляем существующего пользователя
                     await db.collection('users').doc(user.id).set(user, { merge: true });
                 }
                 
-                // Сохраняем в localStorage для оффлайн режима
                 saveUserToLocal(savedUser);
                 return savedUser;
             } catch (error) {
@@ -2498,14 +2569,12 @@ service cloud.firestore {<br>
 
         async function deleteUser(userId) {
             try {
-                // Удаляем все назначения пользователя
                 const assignments = await loadAssignments();
                 const userAssignments = assignments.filter(a => a.userId === userId);
                 for (const assignment of userAssignments) {
                     await deleteAssignment(assignment.id);
                 }
                 
-                // Удаляем все ответы пользователя
                 const userAnswers = await loadUserAnswers();
                 const userUserAnswers = userAnswers.filter(ua => ua.userId === userId);
                 for (const userAnswer of userUserAnswers) {
@@ -2521,7 +2590,6 @@ service cloud.firestore {<br>
 
                 await db.collection('users').doc(userId).delete();
                 
-                // Удаляем из localStorage
                 const users = getLocalUsers();
                 const updatedUsers = users.filter(u => u.id !== userId);
                 localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
@@ -2529,7 +2597,6 @@ service cloud.firestore {<br>
             } catch (error) {
                 console.error('❌ Ошибка удаления пользователя:', error);
                 
-                // Все равно удаляем из localStorage
                 const users = getLocalUsers();
                 const updatedUsers = users.filter(u => u.id !== userId);
                 localStorage.setItem('medicalTestUsers', JSON.stringify(updatedUsers));
@@ -2556,7 +2623,6 @@ service cloud.firestore {<br>
                     });
                 });
                 
-                // Сохраняем в localStorage для оффлайн режима
                 if (questionSets.length > 0) {
                     localStorage.setItem('medicalTestQuestionSets', JSON.stringify(questionSets));
                 }
@@ -2576,16 +2642,13 @@ service cloud.firestore {<br>
 
                 let savedSet = { ...questionSet };
                 
-                // Если у набора нет ID, создаем новый
                 if (!questionSet.id) {
                     const docRef = await db.collection('questionSets').add(questionSet);
                     savedSet.id = docRef.id;
                 } else {
-                    // Если ID есть, обновляем существующий набор
                     await db.collection('questionSets').doc(questionSet.id).set(questionSet, { merge: true });
                 }
                 
-                // Сохраняем в localStorage для оффлайн режима
                 saveQuestionSetToLocal(savedSet);
                 return savedSet;
             } catch (error) {
@@ -2605,7 +2668,6 @@ service cloud.firestore {<br>
 
                 await db.collection('questionSets').doc(questionSetId).delete();
                 
-                // Удаляем из localStorage
                 const questionSets = getLocalQuestionSets();
                 const updatedQuestionSets = questionSets.filter(qs => qs.id !== questionSetId);
                 localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
@@ -2613,7 +2675,6 @@ service cloud.firestore {<br>
             } catch (error) {
                 console.error('❌ Ошибка удаления набора вопросов:', error);
                 
-                // Все равно удаляем из localStorage
                 const questionSets = getLocalQuestionSets();
                 const updatedQuestionSets = questionSets.filter(qs => qs.id !== questionSetId);
                 localStorage.setItem('medicalTestQuestionSets', JSON.stringify(updatedQuestionSets));
@@ -2636,7 +2697,6 @@ service cloud.firestore {<br>
                     });
                 });
                 
-                // Сохраняем в localStorage для оффлайн режима
                 if (assignments.length > 0) {
                     localStorage.setItem('medicalTestAssignments', JSON.stringify(assignments));
                 }
@@ -2656,16 +2716,13 @@ service cloud.firestore {<br>
 
                 let savedAssignment = { ...assignment };
                 
-                // Если у назначения нет ID, создаем новое
                 if (!assignment.id) {
                     const docRef = await db.collection('assignments').add(assignment);
                     savedAssignment.id = docRef.id;
                 } else {
-                    // Если ID есть, обновляем существующее назначение
                     await db.collection('assignments').doc(assignment.id).set(assignment, { merge: true });
                 }
                 
-                // Сохраняем в localStorage для оффлайн режима
                 saveAssignmentToLocal(savedAssignment);
                 return savedAssignment;
             } catch (error) {
@@ -2685,7 +2742,6 @@ service cloud.firestore {<br>
 
                 await db.collection('assignments').doc(assignmentId).delete();
                 
-                // Удаляем из localStorage
                 const assignments = getLocalAssignments();
                 const updatedAssignments = assignments.filter(a => a.id !== assignmentId);
                 localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
@@ -2693,7 +2749,6 @@ service cloud.firestore {<br>
             } catch (error) {
                 console.error('❌ Ошибка удаления назначения:', error);
                 
-                // Все равно удаляем из localStorage
                 const assignments = getLocalAssignments();
                 const updatedAssignments = assignments.filter(a => a.id !== assignmentId);
                 localStorage.setItem('medicalTestAssignments', JSON.stringify(updatedAssignments));
@@ -2710,13 +2765,14 @@ service cloud.firestore {<br>
                 const userAnswers = [];
                 
                 snapshot.forEach(doc => {
+                    const data = doc.data();
                     userAnswers.push({
                         id: doc.id,
-                        ...doc.data()
+                        ...data,
+                        isFullyChecked: data.isFullyChecked !== undefined ? data.isFullyChecked : (data.uncheckedAnswers === 0)
                     });
                 });
                 
-                // Сохраняем в localStorage для оффлайн режима
                 if (userAnswers.length > 0) {
                     localStorage.setItem('medicalTestUserAnswers', JSON.stringify(userAnswers));
                 }
@@ -2730,6 +2786,10 @@ service cloud.firestore {<br>
 
         async function saveUserAnswer(userAnswer) {
             try {
+                if (userAnswer.isFullyChecked === undefined) {
+                    userAnswer.isFullyChecked = userAnswer.uncheckedAnswers === 0;
+                }
+                
                 if (!firebaseConnected || !firebaseHasPermission) {
                     return saveUserAnswerToLocal(userAnswer);
                 }
@@ -2737,7 +2797,6 @@ service cloud.firestore {<br>
                 const docRef = await db.collection('userAnswers').add(userAnswer);
                 userAnswer.id = docRef.id;
                 
-                // Сохраняем в localStorage для оффлайн режима
                 saveUserAnswerToLocal(userAnswer);
                 return userAnswer;
             } catch (error) {
@@ -2748,13 +2807,16 @@ service cloud.firestore {<br>
 
         async function updateUserAnswer(userAnswer) {
             try {
+                if (userAnswer.isFullyChecked === undefined) {
+                    userAnswer.isFullyChecked = userAnswer.uncheckedAnswers === 0;
+                }
+                
                 if (!firebaseConnected || !firebaseHasPermission) {
                     return updateUserAnswerInLocal(userAnswer);
                 }
 
                 await db.collection('userAnswers').doc(userAnswer.id).set(userAnswer, { merge: true });
                 
-                // Обновляем в localStorage для оффлайн режима
                 updateUserAnswerInLocal(userAnswer);
                 return userAnswer;
             } catch (error) {
@@ -2774,7 +2836,6 @@ service cloud.firestore {<br>
 
                 await db.collection('userAnswers').doc(answerId).delete();
                 
-                // Удаляем из localStorage
                 const userAnswers = getLocalUserAnswers();
                 const updatedUserAnswers = userAnswers.filter(a => a.id !== answerId);
                 localStorage.setItem('medicalTestUserAnswers', JSON.stringify(updatedUserAnswers));
@@ -2782,14 +2843,12 @@ service cloud.firestore {<br>
             } catch (error) {
                 console.error('❌ Ошибка удаления ответа пользователя:', error);
                 
-                // Все равно удаляем из localStorage
                 const userAnswers = getLocalUserAnswers();
                 const updatedUserAnswers = userAnswers.filter(a => a.id !== answerId);
                 localStorage.setItem('medicalTestUserAnswers', JSON.stringify(updatedUserAnswers));
             }
         }
 
-        // Функции для работы с localStorage
         function getLocalUsers() {
             try {
                 const users = localStorage.getItem('medicalTestUsers');
@@ -2808,7 +2867,6 @@ service cloud.firestore {<br>
                 if (existingIndex >= 0) {
                     users[existingIndex] = user;
                 } else {
-                    // Если пользователь без id, генерируем временный
                     if (!user.id) {
                         user.id = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                     }
@@ -2849,7 +2907,6 @@ service cloud.firestore {<br>
                 if (existingIndex >= 0) {
                     questionSets[existingIndex] = questionSet;
                 } else {
-                    // Если набор без id, генерируем временный
                     if (!questionSet.id) {
                         questionSet.id = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                     }
@@ -2882,7 +2939,6 @@ service cloud.firestore {<br>
                 if (existingIndex >= 0) {
                     assignments[existingIndex] = assignment;
                 } else {
-                    // Если назначение без id, генерируем временный
                     if (!assignment.id) {
                         assignment.id = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                     }
@@ -2900,7 +2956,14 @@ service cloud.firestore {<br>
         function getLocalUserAnswers() {
             try {
                 const userAnswers = localStorage.getItem('medicalTestUserAnswers');
-                return userAnswers ? JSON.parse(userAnswers) : [];
+                if (userAnswers) {
+                    const answers = JSON.parse(userAnswers);
+                    return answers.map(answer => ({
+                        ...answer,
+                        isFullyChecked: answer.isFullyChecked !== undefined ? answer.isFullyChecked : (answer.uncheckedAnswers === 0)
+                    }));
+                }
+                return [];
             } catch (error) {
                 console.error('❌ Ошибка получения ответов пользователей из localStorage:', error);
                 return [];
@@ -2913,6 +2976,11 @@ service cloud.firestore {<br>
                 if (!userAnswer.id) {
                     userAnswer.id = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 }
+                
+                if (userAnswer.isFullyChecked === undefined) {
+                    userAnswer.isFullyChecked = userAnswer.uncheckedAnswers === 0;
+                }
+                
                 userAnswers.push(userAnswer);
                 localStorage.setItem('medicalTestUserAnswers', JSON.stringify(userAnswers));
                 return userAnswer;
@@ -2926,6 +2994,10 @@ service cloud.firestore {<br>
             try {
                 const userAnswers = getLocalUserAnswers();
                 const existingIndex = userAnswers.findIndex(ua => ua.id === userAnswer.id);
+                
+                if (userAnswer.isFullyChecked === undefined) {
+                    userAnswer.isFullyChecked = userAnswer.uncheckedAnswers === 0;
+                }
                 
                 if (existingIndex >= 0) {
                     userAnswers[existingIndex] = userAnswer;
@@ -2941,7 +3013,6 @@ service cloud.firestore {<br>
             }
         }
 
-        // Функция для получения отображаемого названия подразделения
         function getUnitDisplayName(unit) {
             const unitNames = {
                 'none': 'Нету',
@@ -2955,7 +3026,6 @@ service cloud.firestore {<br>
             return unitNames[unit] || 'Неизвестно';
         }
 
-        // Функция для получения CSS класса подразделения
         function getUnitClass(unit) {
             const unitClasses = {
                 'none': 'unit-none',
@@ -2970,7 +3040,6 @@ service cloud.firestore {<br>
             return unitClasses[unit] || 'unit-none';
         }
 
-        // Функция для получения отображаемого названия роли
         function getRoleDisplayName(role) {
             const roleNames = {
                 'junior-sergeant': 'Младший Сержантский Состав',
@@ -2985,7 +3054,6 @@ service cloud.firestore {<br>
             return roleNames[role] || role;
         }
 
-        // Основная логика приложения
         let currentUser = null;
         let currentQuestionSet = null;
         let currentQuestionIndex = 0;
@@ -3000,9 +3068,9 @@ service cloud.firestore {<br>
         let currentEditingQuestionIndex = null;
         let snowInterval = null;
         let currentSiteSettings = null;
-        let currentRole = null; // 'admin', 'curator', или null
+        let currentRole = null;
+        let answeredQuestions = new Set();
 
-        // DOM элементы
         const userPanel = document.getElementById('user-panel');
         const adminPanel = document.getElementById('admin-panel');
         const curatorPanel = document.getElementById('curator-panel');
@@ -3030,6 +3098,7 @@ service cloud.firestore {<br>
         const submitTestBtn = document.getElementById('submit-test');
         const restartTestBtn = document.getElementById('restart-test');
         const nextQuestionBtn = document.getElementById('next-question');
+        const prevQuestionBtn = document.getElementById('prev-question');
         const timerElement = document.getElementById('timer');
         const questionTimerElement = document.getElementById('question-timer');
         const questionCounterElement = document.getElementById('question-counter');
@@ -3047,7 +3116,6 @@ service cloud.firestore {<br>
         const backToUserContainerCurator = document.getElementById('back-to-user-container-curator');
         const hideFirebaseHelpBtn = document.getElementById('hide-firebase-help');
 
-        // Модальное окно элементы
         const questionModal = document.getElementById('question-modal');
         const closeModalBtn = document.getElementById('close-modal');
         const modalCancelBtn = document.getElementById('modal-cancel-edit');
@@ -3065,7 +3133,6 @@ service cloud.firestore {<br>
         const choiceCorrectAnswerSection = document.getElementById('choice-correct-answer-section');
         const textCorrectAnswerSection = document.getElementById('text-correct-answer-section');
 
-        // Настройки сайта элементы
         const saveSiteSettingsBtn = document.getElementById('save-site-settings');
         const resetSiteSettingsBtn = document.getElementById('reset-site-settings');
         const enableSnowCheckbox = document.getElementById('enable-snow');
@@ -3078,7 +3145,6 @@ service cloud.firestore {<br>
         const colorOptions = document.querySelectorAll('.color-option[data-color]');
         const textColorOptions = document.querySelectorAll('.color-option[data-text-color]');
         
-        // Новые элементы для ручного ввода цвета
         const backgroundColorPicker = document.getElementById('background-color-picker');
         const backgroundColorHex = document.getElementById('background-color-hex');
         const backgroundColorPreview = document.getElementById('background-color-preview');
@@ -3088,7 +3154,6 @@ service cloud.firestore {<br>
         const backgroundColorGrid = document.getElementById('background-color-grid');
         const textColorGrid = document.getElementById('text-color-grid');
 
-        // Элементы для проверки ответов
         const filterVerificationUnitCurator = document.getElementById('filter-verification-unit');
         const filterVerificationRoleCurator = document.getElementById('filter-verification-role');
         const filterVerificationTestCurator = document.getElementById('filter-verification-test');
@@ -3100,13 +3165,10 @@ service cloud.firestore {<br>
         const verificationListCurator = document.getElementById('verification-list-curator');
         const verificationListAdmin = document.getElementById('verification-list-admin');
 
-        // Инициализация приложения
         document.addEventListener('DOMContentLoaded', async function() {
-            // Инициализируем Firebase
             const firebaseInitialized = initializeFirebase();
             
             if (firebaseInitialized) {
-                // Тестируем подключение к Firebase
                 await testFirebaseConnection();
             }
             
@@ -3120,7 +3182,6 @@ service cloud.firestore {<br>
         });
 
         function initQuestionTypeSelector() {
-            // Обработка изменения типа вопроса в модальном окне
             questionTypeChoice.addEventListener('change', function() {
                 if (this.checked) {
                     choiceOptionsSection.style.display = 'block';
@@ -3139,7 +3200,6 @@ service cloud.firestore {<br>
         }
 
         async function loadSiteSettings() {
-            // Настройки по умолчанию
             const defaultSettings = {
                 backgroundColor: '#f5f7fa',
                 textColor: '#333333',
@@ -3149,7 +3209,6 @@ service cloud.firestore {<br>
                 updatedAt: new Date().toISOString()
             };
 
-            // Пытаемся загрузить из Firebase
             if (firebaseConnected && firebaseHasPermission) {
                 try {
                     const firebaseSettings = await loadSiteSettingsFromFirebase();
@@ -3164,7 +3223,6 @@ service cloud.firestore {<br>
                     currentSiteSettings = defaultSettings;
                 }
             } else {
-                // Загружаем из localStorage если Firebase недоступен
                 const localSettings = JSON.parse(localStorage.getItem('medicalTestSiteSettings') || '{}');
                 if (Object.keys(localSettings).length > 0) {
                     currentSiteSettings = { ...defaultSettings, ...localSettings };
@@ -3174,7 +3232,6 @@ service cloud.firestore {<br>
                 }
             }
 
-            // Применяем настройки
             applySiteSettings(currentSiteSettings);
             
             return currentSiteSettings;
@@ -3183,14 +3240,11 @@ service cloud.firestore {<br>
         function applySiteSettings(settings) {
             if (!settings) return;
             
-            // Применяем цвет фона
             document.body.style.backgroundColor = settings.backgroundColor;
             
-            // Применяем цвет текста
             const color = settings.textColor;
             document.body.style.color = color;
             
-            // Применяем цвет к карточкам
             const cards = document.querySelectorAll('.card');
             cards.forEach(card => {
                 if (!card.closest('header')) {
@@ -3198,13 +3252,11 @@ service cloud.firestore {<br>
                 }
             });
             
-            // Применяем цвет к footer
             const footer = document.querySelector('footer');
             if (footer) {
                 footer.style.color = color;
             }
             
-            // Применяем цвет к заголовкам
             const headings = document.querySelectorAll('h2, h3, h4, h5, h6');
             headings.forEach(heading => {
                 if (!heading.closest('header')) {
@@ -3212,7 +3264,6 @@ service cloud.firestore {<br>
                 }
             });
             
-            // Применяем цвет к параграфам
             const paragraphs = document.querySelectorAll('p');
             paragraphs.forEach(p => {
                 if (!p.closest('header')) {
@@ -3220,7 +3271,6 @@ service cloud.firestore {<br>
                 }
             });
             
-            // Применяем цвет к labels
             const labels = document.querySelectorAll('label');
             labels.forEach(label => {
                 if (!label.closest('header')) {
@@ -3228,7 +3278,6 @@ service cloud.firestore {<br>
                 }
             });
             
-            // Применяем снег, если включен
             if (settings.snowEnabled) {
                 startSnow(settings.snowIntensity, settings.snowColor);
             } else {
@@ -3239,7 +3288,6 @@ service cloud.firestore {<br>
         function updateSiteSettingsForm(settings) {
             if (!settings || !backgroundColorPicker) return;
             
-            // Заполняем поля формы
             backgroundColorPicker.value = settings.backgroundColor;
             backgroundColorHex.value = settings.backgroundColor;
             backgroundColorPreview.style.backgroundColor = settings.backgroundColor;
@@ -3255,11 +3303,9 @@ service cloud.firestore {<br>
             snowIntensityValue.textContent = settings.snowIntensity;
             snowColorPicker.value = settings.snowColor;
             
-            // Обновляем выбранные цвета в сетке
             updateSelectedColorInGrid(settings.backgroundColor, colorOptions, 'data-color');
             updateSelectedColorInGrid(settings.textColor, textColorOptions, 'data-text-color');
             
-            // Обновляем предпросмотр снега
             if (settings.snowEnabled) {
                 createSnowPreview();
             } else {
@@ -3431,7 +3477,6 @@ service cloud.firestore {<br>
                 updatedAt: new Date().toISOString()
             };
             
-            // Сохраняем в Firebase
             if (firebaseConnected && firebaseHasPermission) {
                 try {
                     await saveSiteSettingsToFirebase(settings);
@@ -3442,13 +3487,10 @@ service cloud.firestore {<br>
                 }
             }
             
-            // Сохраняем в localStorage
             localStorage.setItem('medicalTestSiteSettings', JSON.stringify(settings));
             
-            // Обновляем текущие настройки
             currentSiteSettings = settings;
             
-            // Применяем настройки
             applySiteSettings(settings);
             
             alert('Настройки сайта сохранены');
@@ -3465,7 +3507,6 @@ service cloud.firestore {<br>
                     updatedAt: new Date().toISOString()
                 };
                 
-                // Сбрасываем в Firebase
                 if (firebaseConnected && firebaseHasPermission) {
                     try {
                         await saveSiteSettingsToFirebase(defaultSettings);
@@ -3475,13 +3516,10 @@ service cloud.firestore {<br>
                     }
                 }
                 
-                // Сохраняем в localStorage
                 localStorage.setItem('medicalTestSiteSettings', JSON.stringify(defaultSettings));
                 
-                // Обновляем текущие настройки
                 currentSiteSettings = defaultSettings;
                 
-                // Применяем настройки
                 applySiteSettings(defaultSettings);
                 
                 alert('Настройки сайта сброшены к значениям по умолчанию');
@@ -3576,7 +3614,6 @@ service cloud.firestore {<br>
         }
 
         function initEventListeners() {
-            // Переключение между панелями
             adminToggle.addEventListener('click', function() {
                 userPanel.style.display = 'none';
                 curatorPanel.style.display = 'none';
@@ -3631,14 +3668,12 @@ service cloud.firestore {<br>
                 currentRole = null;
             });
 
-            // Аутентификация администратора
             adminLoginBtn.addEventListener('click', async function() {
                 const username = document.getElementById('admin-username').value;
                 const password = document.getElementById('admin-password').value;
                 await authenticateAdmin(username, password);
             });
 
-            // Аутентификация куратора
             curatorLoginBtn.addEventListener('click', async function() {
                 const username = document.getElementById('curator-username').value;
                 const password = document.getElementById('curator-password').value;
@@ -3667,7 +3702,6 @@ service cloud.firestore {<br>
                 currentRole = null;
             });
 
-            // Обычный пользователь
             loginBtn.addEventListener('click', function() {
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
@@ -3692,10 +3726,10 @@ service cloud.firestore {<br>
             });
 
             nextQuestionBtn.addEventListener('click', nextQuestion);
+            prevQuestionBtn.addEventListener('click', prevQuestion);
             submitTestBtn.addEventListener('click', submitTest);
             restartTestBtn.addEventListener('click', restartTest);
 
-            // Админ панель - вкладки
             document.querySelectorAll('#admin-content .tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
@@ -3722,7 +3756,6 @@ service cloud.firestore {<br>
                 });
             });
 
-            // Куратор панель - вкладки
             document.querySelectorAll('#curator-content .tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
@@ -3741,21 +3774,20 @@ service cloud.firestore {<br>
                         loadUserAnswersListForCurator();
                     } else if (tabId === 'curator-verification') {
                         loadVerificationListCurator();
+                    } else if (tabId === 'curator-reports') {
+                        loadReportsForCurator();
                     }
                 });
             });
 
-            // Админ панель - пользователи
             document.getElementById('add-user').addEventListener('click', addUser);
             document.getElementById('save-user').addEventListener('click', saveUserChanges);
             document.getElementById('cancel-user-edit').addEventListener('click', cancelUserEdit);
 
-            // Куратор панель - пользователи
             document.getElementById('add-user-curator').addEventListener('click', addUserForCurator);
             document.getElementById('save-user-curator').addEventListener('click', saveUserChangesForCurator);
             document.getElementById('cancel-user-edit-curator').addEventListener('click', cancelUserEditForCurator);
 
-            // Админ панель - вопросы
             document.getElementById('add-question-set').addEventListener('click', addQuestionSet);
             document.getElementById('question-sets').addEventListener('change', loadQuestionsForSet);
             document.getElementById('add-question').addEventListener('click', addNewQuestion);
@@ -3763,13 +3795,12 @@ service cloud.firestore {<br>
             document.getElementById('save-question-set').addEventListener('click', saveQuestionSetChanges);
             document.getElementById('cancel-set-edit').addEventListener('click', cancelSetEdit);
 
-            // Админ панель - назначения
             document.getElementById('assign-test').addEventListener('click', assignTest);
 
-            // Куратор панель - назначения
             document.getElementById('assign-test-curator').addEventListener('click', assignTestForCurator);
 
-            // Фильтры админ панели
+            document.getElementById('generate-report').addEventListener('click', generateReportForCurator);
+
             document.getElementById('filter-unit').addEventListener('change', loadAssignmentsList);
             document.getElementById('filter-role').addEventListener('change', loadAssignmentsList);
 
@@ -3777,7 +3808,6 @@ service cloud.firestore {<br>
             document.getElementById('filter-answers-role').addEventListener('change', loadUserAnswersList);
             document.getElementById('filter-answers-test').addEventListener('change', loadUserAnswersList);
 
-            // Фильтры куратор панели
             document.getElementById('filter-unit-curator').addEventListener('change', loadAssignmentsListForCurator);
             document.getElementById('filter-role-curator').addEventListener('change', loadAssignmentsListForCurator);
 
@@ -3785,7 +3815,6 @@ service cloud.firestore {<br>
             document.getElementById('filter-answers-role-curator').addEventListener('change', loadUserAnswersListForCurator);
             document.getElementById('filter-answers-test-curator').addEventListener('change', loadUserAnswersListForCurator);
 
-            // Фильтры для проверки ответов
             if (filterVerificationUnitCurator) {
                 filterVerificationUnitCurator.addEventListener('change', loadVerificationListCurator);
                 filterVerificationRoleCurator.addEventListener('change', loadVerificationListCurator);
@@ -3918,6 +3947,7 @@ service cloud.firestore {<br>
                 const questionSets = await loadQuestionSets();
                 const availableTests = [];
                 const completedTests = [];
+                const uncheckedTests = [];
                 
                 for (const assignment of userAssignments) {
                     const questionSet = questionSets.find(qs => qs.id === assignment.questionSetId);
@@ -3928,11 +3958,21 @@ service cloud.firestore {<br>
                         );
                         
                         if (existingAnswer) {
-                            completedTests.push({
-                                assignment: assignment,
-                                questionSet: questionSet,
-                                userAnswer: existingAnswer
-                            });
+                            if (existingAnswer.uncheckedAnswers > 0 || !existingAnswer.isFullyChecked) {
+                                uncheckedTests.push({
+                                    assignment: assignment,
+                                    questionSet: questionSet,
+                                    userAnswer: existingAnswer,
+                                    status: 'unchecked'
+                                });
+                            } else {
+                                completedTests.push({
+                                    assignment: assignment,
+                                    questionSet: questionSet,
+                                    userAnswer: existingAnswer,
+                                    status: 'checked'
+                                });
+                            }
                         } else {
                             availableTests.push({
                                 assignment: assignment,
@@ -3942,8 +3982,8 @@ service cloud.firestore {<br>
                     }
                 }
                 
-                if (availableTests.length > 0 || completedTests.length > 0) {
-                    showTestSelection(availableTests, completedTests);
+                if (availableTests.length > 0 || completedTests.length > 0 || uncheckedTests.length > 0) {
+                    showTestSelection(availableTests, completedTests, uncheckedTests);
                 } else {
                     document.getElementById('no-assignment-error').classList.remove('hidden');
                     document.getElementById('no-assignment-error').textContent = 'У вас нет доступных тестов для прохождения.';
@@ -3956,17 +3996,47 @@ service cloud.firestore {<br>
             }
         }
 
-        function showTestSelection(availableTests, completedTests = []) {
+        function showTestSelection(availableTests, completedTests = [], uncheckedTests = []) {
             availableTestsContainer.innerHTML = '';
             selectedAssignment = null;
             startSelectedTestBtn.style.display = 'none';
+            
+            if (uncheckedTests.length > 0) {
+                const uncheckedInfo = document.createElement('div');
+                uncheckedInfo.className = 'test-completed-info';
+                uncheckedInfo.style.backgroundColor = '#fff8e1';
+                uncheckedInfo.style.borderColor = '#f9ab00';
+                uncheckedInfo.innerHTML = `
+                    <h3 style="color: #f9ab00;">Тесты, ожидающие проверки</h3>
+                    <p>Вы прошли эти тесты, но они еще не проверены администратором. Повторное прохождение недоступно до проверки.</p>
+                `;
+                availableTestsContainer.appendChild(uncheckedInfo);
+                
+                uncheckedTests.forEach((test, index) => {
+                    const testOption = document.createElement('div');
+                    testOption.className = 'test-option unchecked';
+                    testOption.setAttribute('data-index', index);
+                    
+                    testOption.innerHTML = `
+                        <div class="unchecked-badge">Ожидает проверки</div>
+                        <h3>${test.questionSet.name}</h3>
+                        <p>${test.questionSet.questions ? test.questionSet.questions.length : 0} вопросов</p>
+                        <div class="test-info">
+                            <span>Результат: ${test.userAnswer.score}/${test.userAnswer.totalQuestions} (${test.userAnswer.percentage}%)</span>
+                            <span>Пройден: ${new Date(test.userAnswer.timestamp).toLocaleDateString('ru-RU')}</span>
+                        </div>
+                    `;
+                    
+                    availableTestsContainer.appendChild(testOption);
+                });
+            }
             
             if (completedTests.length > 0) {
                 const completedInfo = document.createElement('div');
                 completedInfo.className = 'test-completed-info';
                 completedInfo.innerHTML = `
                     <h3>Пройденные тесты</h3>
-                    <p>Вы уже прошли следующие тесты. Повторное прохождение недоступно.</p>
+                    <p>Вы уже прошли и проверили следующие тесты. Повторное прохождение недоступно.</p>
                 `;
                 availableTestsContainer.appendChild(completedInfo);
                 
@@ -3990,7 +4060,7 @@ service cloud.firestore {<br>
             }
             
             if (availableTests.length > 0) {
-                if (completedTests.length > 0) {
+                if (completedTests.length > 0 || uncheckedTests.length > 0) {
                     const availableHeader = document.createElement('h3');
                     availableHeader.textContent = 'Доступные тесты';
                     availableHeader.style.marginTop = '20px';
@@ -4013,7 +4083,7 @@ service cloud.firestore {<br>
                     `;
                     
                     testOption.addEventListener('click', function() {
-                        document.querySelectorAll('.test-option:not(.completed)').forEach(opt => {
+                        document.querySelectorAll('.test-option:not(.completed):not(.unchecked)').forEach(opt => {
                             opt.classList.remove('selected');
                         });
                         this.classList.add('selected');
@@ -4025,7 +4095,7 @@ service cloud.firestore {<br>
                 });
             }
             
-            if (availableTests.length === 0 && completedTests.length > 0) {
+            if (availableTests.length === 0 && (completedTests.length > 0 || uncheckedTests.length > 0)) {
                 const noAvailableMessage = document.createElement('div');
                 noAvailableMessage.className = 'test-completed-info';
                 noAvailableMessage.innerHTML = `
@@ -4034,7 +4104,7 @@ service cloud.firestore {<br>
                 availableTestsContainer.appendChild(noAvailableMessage);
             }
             
-            if (availableTests.length === 0 && completedTests.length === 0) {
+            if (availableTests.length === 0 && completedTests.length === 0 && uncheckedTests.length === 0) {
                 availableTestsContainer.innerHTML = '<p>Нет доступных тестов</p>';
             }
             
@@ -4052,6 +4122,7 @@ service cloud.firestore {<br>
             
             currentQuestionIndex = 0;
             userAnswers = [];
+            answeredQuestions = new Set();
             
             startTest();
             showTestSection();
@@ -4162,15 +4233,12 @@ service cloud.firestore {<br>
             questionText.textContent = question.text;
             questionElement.appendChild(questionText);
             
-            // Проверяем тип вопроса
             if (question.type === 'text' || question.correctAnswerText) {
-                // Вопрос с самостоятельным ответом
                 const textArea = document.createElement('textarea');
                 textArea.className = 'free-answer-textarea';
                 textArea.placeholder = 'Введите ваш ответ здесь...';
                 textArea.rows = 5;
                 
-                // Восстанавливаем сохраненный ответ, если есть
                 if (userAnswers[currentQuestionIndex] !== undefined && userAnswers[currentQuestionIndex] !== null) {
                     textArea.value = userAnswers[currentQuestionIndex];
                 }
@@ -4181,7 +4249,6 @@ service cloud.firestore {<br>
                 
                 questionElement.appendChild(textArea);
             } else {
-                // Вопрос с выбором из вариантов
                 const optionsContainer = document.createElement('div');
                 optionsContainer.className = 'options';
                 
@@ -4218,7 +4285,6 @@ service cloud.firestore {<br>
                 
                 questionElement.appendChild(optionsContainer);
                 
-                // Восстанавливаем выбранный вариант, если есть
                 if (userAnswers[currentQuestionIndex] !== undefined && userAnswers[currentQuestionIndex] !== null) {
                     const selectedOption = document.querySelector(`input[value="${userAnswers[currentQuestionIndex]}"]`);
                     if (selectedOption) {
@@ -4230,8 +4296,19 @@ service cloud.firestore {<br>
             
             questionsContainer.appendChild(questionElement);
             
+            prevQuestionBtn.style.display = currentQuestionIndex > 0 ? 'block' : 'none';
             nextQuestionBtn.style.display = currentQuestionIndex < currentQuestionSet.questions.length - 1 ? 'block' : 'none';
             submitTestBtn.style.display = currentQuestionIndex === currentQuestionSet.questions.length - 1 ? 'block' : 'none';
+            
+            if (prevQuestionBtn.style.display === 'block') {
+                if (answeredQuestions.has(currentQuestionIndex - 1)) {
+                    prevQuestionBtn.disabled = true;
+                    prevQuestionBtn.classList.add('btn-disabled');
+                } else {
+                    prevQuestionBtn.disabled = false;
+                    prevQuestionBtn.classList.remove('btn-disabled');
+                }
+            }
             
             startQuestionTimer(question.time || questionTime);
         }
@@ -4248,7 +4325,13 @@ service cloud.firestore {<br>
                 
                 if (remainingQuestionTime <= 0) {
                     clearInterval(questionTimerInterval);
-                    nextQuestion();
+                    answeredQuestions.add(currentQuestionIndex);
+                    if (currentQuestionIndex < currentQuestionSet.questions.length - 1) {
+                        currentQuestionIndex++;
+                        displayQuestion();
+                    } else {
+                        submitTest();
+                    }
                 }
             }, 1000);
         }
@@ -4266,8 +4349,22 @@ service cloud.firestore {<br>
         }
 
         function nextQuestion() {
-            currentQuestionIndex++;
-            displayQuestion();
+            if (currentQuestionIndex < currentQuestionSet.questions.length - 1) {
+                answeredQuestions.add(currentQuestionIndex);
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                if (answeredQuestions.has(currentQuestionIndex - 1)) {
+                    alert('Вы не можете вернуться к этому вопросу, так как время истекло или вы уже ответили на него.');
+                    return;
+                }
+                currentQuestionIndex--;
+                displayQuestion();
+            }
         }
 
         async function submitTest() {
@@ -4316,7 +4413,6 @@ service cloud.firestore {<br>
                 const userAnswer = userAnswers[index];
                 
                 if (question.type === 'text' || question.correctAnswerText) {
-                    // Вопрос с самостоятельным ответом
                     const isAnswered = userAnswer !== undefined && userAnswer !== null && userAnswer !== '';
                     const answerText = isAnswered ? userAnswer : 'Не отвечено';
                     
@@ -4325,8 +4421,8 @@ service cloud.firestore {<br>
                         questionType: 'text',
                         userAnswer: answerText,
                         correctAnswer: question.correctAnswerText || '',
-                        isCorrect: false, // По умолчанию неправильный, пока не проверен
-                        isChecked: false, // Требует проверки
+                        isCorrect: false,
+                        isChecked: false,
                         isAnswered: isAnswered,
                         verificationStatus: 'unchecked'
                     });
@@ -4335,7 +4431,6 @@ service cloud.firestore {<br>
                         uncheckedAnswers++;
                     }
                 } else {
-                    // Вопрос с выбором из вариантов
                     const isCorrect = userAnswer === question.correctAnswer;
                     const isAnswered = userAnswer !== undefined && userAnswer !== null;
                     
@@ -4345,7 +4440,7 @@ service cloud.firestore {<br>
                         userAnswer: isAnswered ? (question.options[userAnswer] || 'Не отвечено') : 'Не отвечено',
                         correctAnswer: question.options[question.correctAnswer],
                         isCorrect: isCorrect,
-                        isChecked: true, // Автоматически проверен
+                        isChecked: true,
                         isAnswered: isAnswered,
                         verificationStatus: isCorrect ? 'correct' : 'incorrect'
                     });
@@ -4360,7 +4455,6 @@ service cloud.firestore {<br>
             results.uncheckedAnswers = uncheckedAnswers;
             results.score = correctAnswers;
             
-            // Рассчитываем процент только по проверенным вопросам
             const checkedQuestions = totalQuestions - uncheckedAnswers;
             if (checkedQuestions > 0) {
                 results.percentage = Math.round((correctAnswers / checkedQuestions) * 100);
@@ -4420,15 +4514,18 @@ service cloud.firestore {<br>
             currentUnitElement.textContent = getUnitDisplayName(currentUser.unit || 'none');
             scoreElement.textContent = `${results.score} из ${results.totalQuestions}`;
             
-            // Определяем сообщение в зависимости от результатов
             if (results.uncheckedAnswers > 0) {
-                resultMessageElement.textContent = 'Тест завершен! Часть вопросов требует проверки администратором.';
+                resultMessageElement.textContent = 'Тест завершен! Часть вопросов требует проверки администратором. Вы не можете пройти этот тест снова до завершения проверки.';
+                restartTestBtn.style.display = 'none';
             } else if (results.percentage >= results.excellentScore) {
                 resultMessageElement.textContent = 'Отличный результат!';
+                restartTestBtn.style.display = 'none';
             } else if (results.percentage >= 60) {
                 resultMessageElement.textContent = 'Хороший результат!';
+                restartTestBtn.style.display = 'none';
             } else {
                 resultMessageElement.textContent = 'Вам нужно больше практики.';
+                restartTestBtn.style.display = 'none';
             }
             
             resultsSummaryElement.innerHTML = `
@@ -4455,7 +4552,6 @@ service cloud.firestore {<br>
             results.answers.forEach((answer, index) => {
                 const resultItem = document.createElement('div');
                 
-                // Определяем класс в зависимости от типа вопроса и статуса проверки
                 if (answer.questionType === 'text' && !answer.isChecked) {
                     resultItem.className = 'result-item unchecked';
                 } else if (answer.isCorrect) {
@@ -4524,6 +4620,7 @@ service cloud.firestore {<br>
             await loadAssignmentsListForCurator();
             await loadUserAnswersListForCurator();
             await loadVerificationListCurator();
+            loadReportsForCurator();
         }
 
         async function loadUsersList() {
@@ -4594,7 +4691,6 @@ service cloud.firestore {<br>
                 const usersList = document.getElementById('users-list-curator');
                 usersList.innerHTML = '';
                 
-                // Фильтруем только пользователей с ролями врач, фельдшер, санитар и новыми ролями
                 const regularUsers = users.filter(user => 
                     user.role === 'junior-sergeant' || 
                     user.role === 'sergeant' || 
@@ -4810,7 +4906,6 @@ service cloud.firestore {<br>
                     return;
                 }
                 
-                // Куратор может редактировать только пользователей с обычными ролями
                 if (user.role === 'admin' || user.role === 'curator') {
                     alert('Куратор не может редактировать администраторов и других кураторов');
                     return;
@@ -4906,7 +5001,6 @@ service cloud.firestore {<br>
                     return;
                 }
                 
-                // Куратор может сохранять только обычных пользователей
                 if (role === 'admin' || role === 'curator') {
                     alert('Куратор не может создавать администраторов и других кураторов');
                     return;
@@ -4961,7 +5055,6 @@ service cloud.firestore {<br>
             userSelect.innerHTML = '<option value="">-- Выберите пользователя --</option>';
             
             loadUsers().then(users => {
-                // Куратор может назначать тесты только обычным пользователям
                 const regularUsers = users.filter(user => 
                     user.role === 'junior-sergeant' || 
                     user.role === 'sergeant' || 
@@ -4996,6 +5089,7 @@ service cloud.firestore {<br>
                 updateQuestionSetSelect();
                 updateAnswersTestSelect();
                 updateVerificationTestSelects();
+                updateReportTestSelects();
                 
             } catch (error) {
                 console.error('❌ Ошибка загрузки списка наборов вопросов:', error);
@@ -5017,6 +5111,7 @@ service cloud.firestore {<br>
                 
                 updateAnswersTestSelectForCurator();
                 updateVerificationTestSelects();
+                updateReportTestSelects();
                 
             } catch (error) {
                 console.error('❌ Ошибка загрузки списка наборов вопросов для куратора:', error);
@@ -5047,6 +5142,26 @@ service cloud.firestore {<br>
                     
                     if (testSelectAdmin) {
                         testSelectAdmin.appendChild(option.cloneNode(true));
+                    }
+                });
+            });
+        }
+
+        function updateReportTestSelects() {
+            const testSelectCurator = document.getElementById('report-test');
+            
+            if (testSelectCurator) {
+                testSelectCurator.innerHTML = '<option value="">Все тесты</option>';
+            }
+            
+            loadQuestionSets().then(questionSets => {
+                questionSets.forEach(qs => {
+                    const option = document.createElement('option');
+                    option.value = qs.id;
+                    option.textContent = qs.name;
+                    
+                    if (testSelectCurator) {
+                        testSelectCurator.appendChild(option.cloneNode(true));
                     }
                 });
             });
@@ -5347,7 +5462,6 @@ service cloud.firestore {<br>
             modalCorrectAnswerText.value = '';
             modalQuestionTime.value = questionTime;
             
-            // Сброс к типу "выбор из вариантов"
             questionTypeChoice.checked = true;
             choiceOptionsSection.style.display = 'block';
             choiceCorrectAnswerSection.style.display = 'block';
@@ -5380,9 +5494,7 @@ service cloud.firestore {<br>
                 modalQuestionText.value = question.text;
                 modalQuestionTime.value = question.time || questionTime;
                 
-                // Определяем тип вопроса
                 if (question.type === 'text' || question.correctAnswerText) {
-                    // Вопрос с самостоятельным ответом
                     questionTypeText.checked = true;
                     choiceOptionsSection.style.display = 'none';
                     choiceCorrectAnswerSection.style.display = 'none';
@@ -5391,7 +5503,6 @@ service cloud.firestore {<br>
                     modalCorrectAnswerText.value = question.correctAnswerText || '';
                     modalOptionsContainer.innerHTML = '';
                 } else {
-                    // Вопрос с выбором из вариантов
                     questionTypeChoice.checked = true;
                     choiceOptionsSection.style.display = 'block';
                     choiceCorrectAnswerSection.style.display = 'block';
@@ -5450,7 +5561,6 @@ service cloud.firestore {<br>
                 let updatedQuestion;
                 
                 if (questionType === 'text') {
-                    // Вопрос с самостоятельным ответом
                     const correctAnswerText = modalCorrectAnswerText.value;
                     
                     if (!correctAnswerText) {
@@ -5465,7 +5575,6 @@ service cloud.firestore {<br>
                         time: questionTimeValue
                     };
                 } else {
-                    // Вопрос с выбором из вариантов
                     const optionInputs = document.querySelectorAll('.modal-option-input');
                     const options = Array.from(optionInputs).map(input => input.value.trim()).filter(value => value !== '');
                     const correctAnswer = parseInt(modalCorrectAnswer.value);
@@ -5674,7 +5783,6 @@ service cloud.firestore {<br>
                     });
                 }
                 
-                // Куратор видит только назначения для обычных пользователей
                 const users = await loadUsers();
                 filteredAssignments = filteredAssignments.filter(assignment => {
                     const user = users.find(u => u.id === assignment.userId);
@@ -5948,7 +6056,6 @@ service cloud.firestore {<br>
                     filteredAnswers = filteredAnswers.filter(answer => answer.questionSetId === filterTest);
                 }
                 
-                // Куратор видит только ответы обычных пользователей
                 filteredAnswers = filteredAnswers.filter(answer => 
                     answer.userRole === 'junior-sergeant' || 
                     answer.userRole === 'sergeant' || 
@@ -6059,22 +6166,18 @@ service cloud.firestore {<br>
                 
                 let filteredAnswers = userAnswers;
                 
-                // Фильтрация по подразделению
                 if (filterUnit) {
                     filteredAnswers = filteredAnswers.filter(answer => answer.userUnit === filterUnit);
                 }
                 
-                // Фильтрация по роли
                 if (filterRole) {
                     filteredAnswers = filteredAnswers.filter(answer => answer.userRole === filterRole);
                 }
                 
-                // Фильтрация по тесту
                 if (filterTest) {
                     filteredAnswers = filteredAnswers.filter(answer => answer.questionSetId === filterTest);
                 }
                 
-                // Куратор видит только ответы обычных пользователей
                 filteredAnswers = filteredAnswers.filter(answer => 
                     answer.userRole === 'junior-sergeant' || 
                     answer.userRole === 'sergeant' || 
@@ -6084,7 +6187,6 @@ service cloud.firestore {<br>
                     answer.userRole === 'doctor'
                 );
                 
-                // Фильтрация по статусу проверки
                 if (filterStatus === 'unchecked') {
                     filteredAnswers = filteredAnswers.filter(answer => 
                         answer.answers.some(a => a.questionType === 'text' && !a.isChecked)
@@ -6105,7 +6207,6 @@ service cloud.firestore {<br>
                 for (const answer of filteredAnswers) {
                     const date = new Date(answer.timestamp).toLocaleString('ru-RU');
                     
-                    // Считаем вопросы, требующие проверки
                     const questionsToCheck = answer.answers.filter(a => a.questionType === 'text' && !a.isChecked);
                     
                     if (questionsToCheck.length === 0 && filterStatus !== 'checked') {
@@ -6126,6 +6227,7 @@ service cloud.firestore {<br>
                                 <div><strong>Тест:</strong> ${answer.questionSetName}</div>
                                 <div><strong>Время прохождения:</strong> ${answer.mskTime || date}</div>
                                 <div><strong>Вопросов для проверки:</strong> ${questionsToCheck.length}</div>
+                                <div><strong>Статус проверки:</strong> ${answer.isFullyChecked ? 'Полностью проверен' : 'Требует проверки'}</div>
                             </div>
                         </div>
                         <div class="user-answer-details">
@@ -6141,6 +6243,10 @@ service cloud.firestore {<br>
                                     <div class="preserve-formatting" style="background-color: #f0f0f0; padding: 10px; border-radius: 4px; margin: 5px 0;">${userAnswer.userAnswer}</div>
                                     <div><strong>Эталонный ответ:</strong></div>
                                     <div class="preserve-formatting" style="background-color: #e8f5e9; padding: 10px; border-radius: 4px; margin: 5px 0;">${userAnswer.correctAnswer}</div>
+                                    <div class="verification-notes">
+                                        <label>Комментарий к проверке:</label>
+                                        <textarea id="verification-notes-${answer.id}-${index}" placeholder="Добавьте комментарий к проверке (необязательно)"></textarea>
+                                    </div>
                                     <div class="verification-buttons">
                                         <button class="btn btn-success verify-correct" data-answer-id="${answer.id}" data-question-index="${index}">Правильно</button>
                                         <button class="btn btn-danger verify-incorrect" data-answer-id="${answer.id}" data-question-index="${index}">Неправильно</button>
@@ -6154,12 +6260,12 @@ service cloud.firestore {<br>
                     verificationList.appendChild(answerItem);
                 }
                 
-                // Добавляем обработчики для кнопок проверки
                 verificationList.querySelectorAll('.verify-correct').forEach(button => {
                     button.addEventListener('click', function() {
                         const answerId = this.getAttribute('data-answer-id');
                         const questionIndex = parseInt(this.getAttribute('data-question-index'));
-                        verifyAnswer(answerId, questionIndex, true);
+                        const notes = document.getElementById(`verification-notes-${answerId}-${questionIndex}`)?.value || '';
+                        verifyAnswer(answerId, questionIndex, true, notes);
                     });
                 });
                 
@@ -6167,7 +6273,8 @@ service cloud.firestore {<br>
                     button.addEventListener('click', function() {
                         const answerId = this.getAttribute('data-answer-id');
                         const questionIndex = parseInt(this.getAttribute('data-question-index'));
-                        verifyAnswer(answerId, questionIndex, false);
+                        const notes = document.getElementById(`verification-notes-${answerId}-${questionIndex}`)?.value || '';
+                        verifyAnswer(answerId, questionIndex, false, notes);
                     });
                 });
                 
@@ -6190,22 +6297,18 @@ service cloud.firestore {<br>
                 
                 let filteredAnswers = userAnswers;
                 
-                // Фильтрация по подразделению
                 if (filterUnit) {
                     filteredAnswers = filteredAnswers.filter(answer => answer.userUnit === filterUnit);
                 }
                 
-                // Фильтрация по роли
                 if (filterRole) {
                     filteredAnswers = filteredAnswers.filter(answer => answer.userRole === filterRole);
                 }
                 
-                // Фильтрация по тесту
                 if (filterTest) {
                     filteredAnswers = filteredAnswers.filter(answer => answer.questionSetId === filterTest);
                 }
                 
-                // Фильтрация по статусу проверки
                 if (filterStatus === 'unchecked') {
                     filteredAnswers = filteredAnswers.filter(answer => 
                         answer.answers.some(a => a.questionType === 'text' && !a.isChecked)
@@ -6226,7 +6329,6 @@ service cloud.firestore {<br>
                 for (const answer of filteredAnswers) {
                     const date = new Date(answer.timestamp).toLocaleString('ru-RU');
                     
-                    // Считаем вопросы, требующие проверки
                     const questionsToCheck = answer.answers.filter(a => a.questionType === 'text' && !a.isChecked);
                     
                     if (questionsToCheck.length === 0 && filterStatus !== 'checked') {
@@ -6247,6 +6349,7 @@ service cloud.firestore {<br>
                                 <div><strong>Тест:</strong> ${answer.questionSetName}</div>
                                 <div><strong>Время прохождения:</strong> ${answer.mskTime || date}</div>
                                 <div><strong>Вопросов для проверки:</strong> ${questionsToCheck.length}</div>
+                                <div><strong>Статус проверки:</strong> ${answer.isFullyChecked ? 'Полностью проверен' : 'Требует проверки'}</div>
                             </div>
                         </div>
                         <div class="user-answer-details">
@@ -6262,6 +6365,10 @@ service cloud.firestore {<br>
                                     <div class="preserve-formatting" style="background-color: #f0f0f0; padding: 10px; border-radius: 4px; margin: 5px 0;">${userAnswer.userAnswer}</div>
                                     <div><strong>Эталонный ответ:</strong></div>
                                     <div class="preserve-formatting" style="background-color: #e8f5e9; padding: 10px; border-radius: 4px; margin: 5px 0;">${userAnswer.correctAnswer}</div>
+                                    <div class="verification-notes">
+                                        <label>Комментарий к проверке:</label>
+                                        <textarea id="verification-notes-admin-${answer.id}-${index}" placeholder="Добавьте комментарий к проверке (необязательно)"></textarea>
+                                    </div>
                                     <div class="verification-buttons">
                                         <button class="btn btn-success verify-correct-admin" data-answer-id="${answer.id}" data-question-index="${index}">Правильно</button>
                                         <button class="btn btn-danger verify-incorrect-admin" data-answer-id="${answer.id}" data-question-index="${index}">Неправильно</button>
@@ -6275,12 +6382,12 @@ service cloud.firestore {<br>
                     verificationList.appendChild(answerItem);
                 }
                 
-                // Добавляем обработчики для кнопок проверки
                 verificationList.querySelectorAll('.verify-correct-admin').forEach(button => {
                     button.addEventListener('click', function() {
                         const answerId = this.getAttribute('data-answer-id');
                         const questionIndex = parseInt(this.getAttribute('data-question-index'));
-                        verifyAnswer(answerId, questionIndex, true);
+                        const notes = document.getElementById(`verification-notes-admin-${answerId}-${questionIndex}`)?.value || '';
+                        verifyAnswer(answerId, questionIndex, true, notes);
                     });
                 });
                 
@@ -6288,7 +6395,8 @@ service cloud.firestore {<br>
                     button.addEventListener('click', function() {
                         const answerId = this.getAttribute('data-answer-id');
                         const questionIndex = parseInt(this.getAttribute('data-question-index'));
-                        verifyAnswer(answerId, questionIndex, false);
+                        const notes = document.getElementById(`verification-notes-admin-${answerId}-${questionIndex}`)?.value || '';
+                        verifyAnswer(answerId, questionIndex, false, notes);
                     });
                 });
                 
@@ -6298,7 +6406,7 @@ service cloud.firestore {<br>
             }
         }
 
-        async function verifyAnswer(answerId, questionIndex, isCorrect) {
+        async function verifyAnswer(answerId, questionIndex, isCorrect, notes = '') {
             try {
                 const userAnswers = await loadUserAnswers();
                 const userAnswer = userAnswers.find(ua => ua.id === answerId);
@@ -6308,12 +6416,13 @@ service cloud.firestore {<br>
                     return;
                 }
                 
-                // Обновляем статус проверки вопроса
                 userAnswer.answers[questionIndex].isChecked = true;
                 userAnswer.answers[questionIndex].isCorrect = isCorrect;
                 userAnswer.answers[questionIndex].verificationStatus = isCorrect ? 'correct' : 'incorrect';
+                if (notes) {
+                    userAnswer.answers[questionIndex].verificationNotes = notes;
+                }
                 
-                // Пересчитываем результаты
                 let correctAnswers = 0;
                 let uncheckedAnswers = 0;
                 
@@ -6333,7 +6442,6 @@ service cloud.firestore {<br>
                 userAnswer.uncheckedAnswers = uncheckedAnswers;
                 userAnswer.isFullyChecked = uncheckedAnswers === 0;
                 
-                // Рассчитываем процент только по проверенным вопросам
                 const checkedQuestions = userAnswer.totalQuestions - uncheckedAnswers;
                 if (checkedQuestions > 0) {
                     userAnswer.percentage = Math.round((correctAnswers / checkedQuestions) * 100);
@@ -6341,10 +6449,11 @@ service cloud.firestore {<br>
                     userAnswer.percentage = 0;
                 }
                 
-                // Сохраняем обновленный ответ
+                userAnswer.verifiedAt = new Date().toISOString();
+                userAnswer.verifiedBy = currentRole === 'admin' ? 'Администратор' : 'Куратор';
+                
                 await updateUserAnswer(userAnswer);
                 
-                // Обновляем интерфейс
                 if (currentRole === 'admin') {
                     await loadVerificationListAdmin();
                     await loadUserAnswersList();
@@ -6358,6 +6467,275 @@ service cloud.firestore {<br>
             } catch (error) {
                 console.error('❌ Ошибка проверки ответа:', error);
                 alert('Ошибка при проверке ответа');
+            }
+        }
+
+        async function loadReportsForCurator() {
+            const reportResults = document.getElementById('report-results');
+            reportResults.innerHTML = '<p>Используйте фильтры для формирования отчета и нажмите "Сформировать отчет"</p>';
+        }
+
+        async function generateReportForCurator() {
+            try {
+                const userAnswers = await loadUserAnswers();
+                const questionSets = await loadQuestionSets();
+                const users = await loadUsers();
+                
+                const filterUnit = document.getElementById('report-unit').value;
+                const filterRole = document.getElementById('report-role').value;
+                const filterTest = document.getElementById('report-test').value;
+                const filterPeriod = document.getElementById('report-period').value;
+                
+                let filteredAnswers = userAnswers;
+                
+                if (filterUnit) {
+                    filteredAnswers = filteredAnswers.filter(answer => answer.userUnit === filterUnit);
+                }
+                
+                if (filterRole) {
+                    filteredAnswers = filteredAnswers.filter(answer => answer.userRole === filterRole);
+                }
+                
+                if (filterTest) {
+                    filteredAnswers = filteredAnswers.filter(answer => answer.questionSetId === filterTest);
+                }
+                
+                if (filterPeriod !== 'all') {
+                    const now = new Date();
+                    let startDate = new Date();
+                    
+                    if (filterPeriod === 'month') {
+                        startDate.setMonth(now.getMonth() - 1);
+                    } else if (filterPeriod === 'week') {
+                        startDate.setDate(now.getDate() - 7);
+                    } else if (filterPeriod === 'day') {
+                        startDate.setDate(now.getDate() - 1);
+                    }
+                    
+                    filteredAnswers = filteredAnswers.filter(answer => {
+                        const answerDate = new Date(answer.timestamp);
+                        return answerDate >= startDate;
+                    });
+                }
+                
+                filteredAnswers = filteredAnswers.filter(answer => 
+                    answer.userRole === 'junior-sergeant' || 
+                    answer.userRole === 'sergeant' || 
+                    answer.userRole === 'junior-officer' ||
+                    answer.userRole === 'sanitary' ||
+                    answer.userRole === 'medic' ||
+                    answer.userRole === 'doctor'
+                );
+                
+                if (filteredAnswers.length === 0) {
+                    document.getElementById('report-results').innerHTML = '<p>Нет данных для формирования отчета по выбранным критериям</p>';
+                    return;
+                }
+                
+                const reportData = {
+                    totalTests: filteredAnswers.length,
+                    totalUsers: new Set(filteredAnswers.map(a => a.userId)).size,
+                    averageScore: 0,
+                    excellentCount: 0,
+                    goodCount: 0,
+                    satisfactoryCount: 0,
+                    unsatisfactoryCount: 0,
+                    uncheckedCount: 0,
+                    byUnit: {},
+                    byRole: {},
+                    byTest: {}
+                };
+                
+                let totalPercentage = 0;
+                
+                filteredAnswers.forEach(answer => {
+                    if (!answer.isFullyChecked) {
+                        reportData.uncheckedCount++;
+                    } else if (answer.percentage >= answer.excellentScore) {
+                        reportData.excellentCount++;
+                    } else if (answer.percentage >= 60) {
+                        reportData.goodCount++;
+                    } else if (answer.percentage >= 40) {
+                        reportData.satisfactoryCount++;
+                    } else {
+                        reportData.unsatisfactoryCount++;
+                    }
+                    
+                    totalPercentage += answer.percentage;
+                    
+                    const unit = answer.userUnit;
+                    if (!reportData.byUnit[unit]) {
+                        reportData.byUnit[unit] = { count: 0, totalScore: 0 };
+                    }
+                    reportData.byUnit[unit].count++;
+                    reportData.byUnit[unit].totalScore += answer.percentage;
+                    
+                    const role = answer.userRole;
+                    if (!reportData.byRole[role]) {
+                        reportData.byRole[role] = { count: 0, totalScore: 0 };
+                    }
+                    reportData.byRole[role].count++;
+                    reportData.byRole[role].totalScore += answer.percentage;
+                    
+                    const testId = answer.questionSetId;
+                    if (!reportData.byTest[testId]) {
+                        const test = questionSets.find(qs => qs.id === testId);
+                        reportData.byTest[testId] = { 
+                            name: test ? test.name : 'Неизвестный тест',
+                            count: 0, 
+                            totalScore: 0 
+                        };
+                    }
+                    reportData.byTest[testId].count++;
+                    reportData.byTest[testId].totalScore += answer.percentage;
+                });
+                
+                reportData.averageScore = filteredAnswers.length > 0 ? Math.round(totalPercentage / filteredAnswers.length) : 0;
+                
+                let reportHtml = `
+                    <h3>Отчет по тестированию</h3>
+                    <div class="results-summary">
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.totalTests}</div>
+                            <div class="summary-label">Всего тестов</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.totalUsers}</div>
+                            <div class="summary-label">Уникальных пользователей</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.averageScore}%</div>
+                            <div class="summary-label">Средний результат</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.uncheckedCount}</div>
+                            <div class="summary-label">Ожидают проверки</div>
+                        </div>
+                    </div>
+                    
+                    <h4>Распределение по оценкам:</h4>
+                    <div class="results-summary">
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.excellentCount}</div>
+                            <div class="summary-label">Отлично</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.goodCount}</div>
+                            <div class="summary-label">Хорошо</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.satisfactoryCount}</div>
+                            <div class="summary-label">Удовлетворительно</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">${reportData.unsatisfactoryCount}</div>
+                            <div class="summary-label">Неудовлетворительно</div>
+                        </div>
+                    </div>
+                `;
+                
+                if (Object.keys(reportData.byUnit).length > 0) {
+                    reportHtml += `<h4>Результаты по подразделениям:</h4>`;
+                    reportHtml += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">`;
+                    reportHtml += `<tr><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Подразделение</th><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Количество тестов</th><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Средний результат</th></tr>`;
+                    
+                    for (const [unit, data] of Object.entries(reportData.byUnit)) {
+                        const avgScore = data.count > 0 ? Math.round(data.totalScore / data.count) : 0;
+                        reportHtml += `<tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${getUnitDisplayName(unit)}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${data.count}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${avgScore}%</td>
+                        </tr>`;
+                    }
+                    
+                    reportHtml += `</table>`;
+                }
+                
+                if (Object.keys(reportData.byRole).length > 0) {
+                    reportHtml += `<h4>Результаты по ролям:</h4>`;
+                    reportHtml += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">`;
+                    reportHtml += `<tr><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Роль</th><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Количество тестов</th><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Средний результат</th></tr>`;
+                    
+                    for (const [role, data] of Object.entries(reportData.byRole)) {
+                        const avgScore = data.count > 0 ? Math.round(data.totalScore / data.count) : 0;
+                        reportHtml += `<tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${getRoleDisplayName(role)}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${data.count}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${avgScore}%</td>
+                        </tr>`;
+                    }
+                    
+                    reportHtml += `</table>`;
+                }
+                
+                if (Object.keys(reportData.byTest).length > 0) {
+                    reportHtml += `<h4>Результаты по тестам:</h4>`;
+                    reportHtml += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">`;
+                    reportHtml += `<tr><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Тест</th><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Количество прохождений</th><th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Средний результат</th></tr>`;
+                    
+                    for (const [testId, data] of Object.entries(reportData.byTest)) {
+                        const avgScore = data.count > 0 ? Math.round(data.totalScore / data.count) : 0;
+                        reportHtml += `<tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${data.name}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${data.count}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${avgScore}%</td>
+                        </tr>`;
+                    }
+                    
+                    reportHtml += `</table>`;
+                }
+                
+                reportHtml += `<button class="btn btn-info" id="export-report">Экспортировать отчет в CSV</button>`;
+                
+                document.getElementById('report-results').innerHTML = reportHtml;
+                
+                document.getElementById('export-report').addEventListener('click', function() {
+                    exportReportToCSV(filteredAnswers, questionSets, users);
+                });
+                
+            } catch (error) {
+                console.error('❌ Ошибка формирования отчета:', error);
+                document.getElementById('report-results').innerHTML = '<p>Ошибка при формировании отчета</p>';
+            }
+        }
+
+        function exportReportToCSV(filteredAnswers, questionSets, users) {
+            try {
+                let csvContent = "Пользователь,Подразделение,Роль,Тест,Результат,Процент,Статус проверки,Время прохождения\n";
+                
+                filteredAnswers.forEach(answer => {
+                    const user = users.find(u => u.id === answer.userId);
+                    const questionSet = questionSets.find(qs => qs.id === answer.questionSetId);
+                    
+                    const row = [
+                        `"${answer.userName || 'Неизвестно'}"`,
+                        `"${getUnitDisplayName(answer.userUnit)}"`,
+                        `"${getRoleDisplayName(answer.userRole)}"`,
+                        `"${questionSet ? questionSet.name : 'Неизвестный тест'}"`,
+                        `"${answer.score}/${answer.totalQuestions}"`,
+                        `"${answer.percentage}%"`,
+                        `"${answer.isFullyChecked ? 'Проверен' : 'Ожидает проверки'}"`,
+                        `"${answer.mskTime || answer.timestamp}"`
+                    ].join(',');
+                    
+                    csvContent += row + '\n';
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `отчет_тестирования_${new Date().toISOString().slice(0, 10)}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+            } catch (error) {
+                console.error('❌ Ошибка экспорта отчета:', error);
+                alert('Ошибка при экспорте отчета');
             }
         }
 
